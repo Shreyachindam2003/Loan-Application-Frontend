@@ -1,0 +1,151 @@
+<div class="d-flex min-vh-100 bg-light">
+
+  <app-customer-sidebar></app-customer-sidebar>
+
+  <div class="flex-grow-1 p-3 p-md-4" style="margin-left: clamp(180px, 20vw, 220px);">
+    <div class="container-fluid bg-white border rounded-4 shadow-sm p-3 p-md-4">
+
+      <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+
+        <div class="bg-primary bg-opacity-10 rounded-3 p-2">
+          <i class="bi bi-speedometer2 fs-3 text-primary"></i>
+        </div>
+
+        <div>
+          <h1 class="h4 fw-bold mb-1">CIBIL Score</h1>
+          <p class="text-secondary small mb-0">
+            Check your credit score report
+          </p>
+        </div>
+
+      </div>
+
+      <form>
+        <div class="row g-3 align-items-end">
+
+          <div class="col-lg-4 col-md-5">
+            <label class="form-label fw-semibold">
+              Customer Name
+            </label>
+
+            <input type="text" class="form-control bg-light" [formControl]="customerName" readonly />
+          </div>
+
+          <div class="col-lg-4 col-md-5">
+            <label class="form-label fw-semibold">
+              PAN Number
+            </label>
+
+            <input type="text" class="form-control bg-light" [formControl]="panNumber" readonly />
+          </div>
+
+          <div class="col-lg-4 col-md-2">
+            <button type="button" class="btn btn-primary px-4 py-2 w-100" (click)="checkScore()">
+
+              <i class="bi bi-search me-2"></i>
+              Check Score
+
+            </button>
+          </div>
+
+        </div>
+      </form>
+
+      <div *ngIf="cibilScore != null" class="mt-4 pt-4 border-top">
+
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-4">
+
+          <i class="bi bi-clipboard-data fs-4 text-primary"></i>
+
+          <h5 class="fw-bold mb-0">
+            CIBIL Score Report
+          </h5>
+
+        </div>
+
+        <div class="row justify-content-center">
+
+          <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+            <div class="text-center p-2 p-md-3">
+
+              <h6 class="text-secondary fw-semibold mb-3">
+                Your Credit Score
+              </h6>
+
+              <div class="mx-auto" style="max-width: 320px;">
+
+                <svg viewBox="0 0 240 160" class="w-100" xmlns="http://www.w3.org/2000/svg" role="img"
+                  aria-label="Credit score gauge">
+
+                  <defs>
+                    <linearGradient id="cibilGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+
+                      <stop offset="0%" stop-color="#dc3545" />
+                      <stop offset="35%" stop-color="#ffc107" />
+                      <stop offset="65%" stop-color="#a8cf35" />
+                      <stop offset="100%" stop-color="#198754" />
+
+                    </linearGradient>
+                  </defs>
+
+                  <path d="M 35 125 A 85 85 0 0 1 205 125" fill="none" stroke="#edf0f4" stroke-width="18" />
+                <path d="M 35 125 A 85 85 0 0 1 205 125" fill="none" stroke="url(#cibilGradient)" stroke-width="18" />
+
+                  <g [attr.transform]="'rotate(' +
+                    (-90 + ((Math.max(300, Math.min(900, +cibilScore || 300)) - 300) / 600) * 180)
+                    + ' 120 125)'">
+                    <line x1="120" y1="125" x2="120" y2="58" stroke="#343a40" stroke-width="2.5"
+                      stroke-linecap="round" />
+
+                  </g>
+
+                  <circle cx="120" cy="125" r="5" fill="#343a40" />
+                  <text x="35" y="145" font-size="10" text-anchor="middle" fill="#6c757d">300</text>
+                  <text x="120" y="151" font-size="10" text-anchor="middle" fill="#6c757d">600</text>
+                  <text x="205" y="145" font-size="10" text-anchor="middle" fill="#6c757d">900</text>
+                </svg>
+
+              </div>
+              <h2 class="display-4 fw-bold text-primary mb-0">
+                {{ cibilScore }}
+              </h2>
+
+              <p class="text-secondary small mb-3">
+                Out of 900
+              </p>
+
+              <div class="mb-4">
+
+                <span class="badge rounded-pill px-3 py-2" [class.bg-success]="+cibilScore >= 750"
+                  [class.bg-warning]="+cibilScore >= 650 && +cibilScore < 750"
+                  [class.text-dark]="+cibilScore >= 650 && +cibilScore < 750" [class.bg-danger]="+cibilScore < 650">
+
+                  {{ status }}
+
+                </span>
+
+              </div>
+              <div class="border-top pt-3 mt-3">
+
+                <div class="small text-secondary">
+                  <i class="bi bi-calendar-check me-1"></i>
+                  Last Checked Date
+                </div>
+
+                <div class="fw-semibold mt-1">
+                {{ checkDate | date:'MM-dd-yyyy hh:mm a' }}
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

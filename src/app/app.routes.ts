@@ -10,13 +10,27 @@ export const routes: Routes = [
         .then(m => m.CustomerDashboard)
   },
 
+
+
   {
     path: 'officer/dashboard',
     loadComponent: () =>
       import('./features/credit-officer/pages/credit-officer-dashboard/credit-officer-dashboard')
         .then(m => m.CreditOfficerDashboard)
   },
-
+{
+    path:'customer/cibil-score',
+    loadComponent:()=>
+    import('./features/cibil/pages/cibil-score/cibil-score')
+    .then(m=>m.CibilScore)
+  
+  },
+  {
+    path:'customer/eligibility-check',
+    loadComponent:()=>
+    import('./features/cibil/pages/eligibility-check/eligibility-check')
+    .then(m=>m.EligibilityCheck)
+},
   {
     path: '',
     redirectTo: 'customer/dashboard',
@@ -28,4 +42,6 @@ export const routes: Routes = [
     redirectTo: 'customer/dashboard'
   }
 
+  
+    
 ];

@@ -6,11 +6,46 @@
   </div>
 
   <nav>
-    <a routerLink="/customer/profile" class="menu-link">
-      <i class="bi bi-person"></i>
-      <span>Customer</span>
-      <i class="bi bi-chevron-down ms-auto"></i>
-    </a>
+<a class="menu-link"
+   data-bs-toggle="collapse"
+   href="#customerMenu"
+   role="button"
+   aria-expanded="false"
+   aria-controls="customerMenu">
+
+  <i class="bi bi-person"></i>
+  <span>Customer</span>
+  <i class="bi bi-chevron-down ms-auto"></i>
+</a>
+
+<div class="collapse" id="customerMenu">
+
+  <a routerLink="/customer/dashboard" class="menu-link">
+    <i class="bi bi-house"></i>
+    <span>Dashboard</span>
+  </a>
+
+  <a routerLink="/customer/profile" class="menu-link">
+    <i class="bi bi-person-circle"></i>
+    <span>Profile</span>
+  </a>
+
+  <a routerLink="/customer/kyc" class="menu-link">
+    <i class="bi bi-shield-check"></i>
+    <span>KYC Verification</span>
+  </a>
+
+  <a routerLink="/customer/cibil-score" class="menu-link">
+    <i class="bi bi-credit-card"></i>
+    <span>CIBIL Score</span>
+  </a>
+
+  <a routerLink="/customer/eligibility-check" class="menu-link">
+    <i class="bi bi-check-circle"></i>
+    <span>Eligibility Result</span>
+  </a>
+
+</div>
 
     <a routerLink="/loan" class="menu-link">
       <i class="bi bi-bank"></i>
