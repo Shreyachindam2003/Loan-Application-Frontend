@@ -14,9 +14,7 @@ url='http://localhost:8080/api/v1/cibil/customer/{customerId}/details'
 
 getCibilReport(CustomerId:any) {
     
-  return this.http.get(this.url.replace('{customerId}',CustomerId.toString()),
-
-  );
+  return this.http.get(this.url.replace('{customerId}',CustomerId.toString()));
 }
 
 

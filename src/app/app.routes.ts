@@ -31,17 +31,37 @@ export const routes: Routes = [
     import('./features/cibil/pages/eligibility-check/eligibility-check')
     .then(m=>m.EligibilityCheck)
 },
+{
+path:'officer/customers',
+loadComponent:()=>
+    import('./features/cibil/pages/cibil-officer/cibil-officer')
+    .then(m=>m.CibilOfficer)
+},
+
+
+
+  // {
+  //   path: '',
+  //   redirectTo: 'customer/dashboard',
+  //   pathMatch: 'full'
+  // }
+  
   {
     path: '',
-    redirectTo: 'customer/dashboard',
+    redirectTo: 'officer/dashboard',
     pathMatch: 'full'
-  },
+  }
+  ,
+
+  // {
+  //   path: '**',
+  //   redirectTo: 'customer/dashboard'
+  // }
 
   {
     path: '**',
-    redirectTo: 'customer/dashboard'
+    redirectTo: 'officer/dashboard'
   }
 
-  
     
 ];

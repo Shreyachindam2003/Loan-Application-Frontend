@@ -9,4 +9,8 @@ import { RouterLink } from '@angular/router';
   templateUrl: './customer-sidebar.html',
   styleUrl: './customer-sidebar.css'
 })
-export class CustomerSidebar {}
+export class CustomerSidebar {
+
+  isOpen = false;
+customerMenuOpen = true;
+}

@@ -1,0 +1,26 @@
+.main-content {
+  margin-left: 220px;
+  width: calc(100% - 220px);
+  padding: 40px 65px 20px 20px;
+  box-sizing: border-box;
+}
+
+.main-content .card {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+@media (max-width: 992px) {
+  .main-content {
+    padding: 30px 25px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 70px 15px 20px;
+  }
+}

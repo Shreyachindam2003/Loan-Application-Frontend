@@ -1,1 +1,96 @@
-<p>eligibility-check works!</p>
+<div class="container-fluid min-vh-100 bg-light p-0">
+    <div class="row g-0 min-vh-100">
+
+        <app-customer-sidebar>
+        </app-customer-sidebar>
+
+        <main class="main-content col">
+
+            <div class="container-fluid px-0">
+
+                <div class="card border-0 shadow-sm rounded-3
+                p-3 p-sm-4 p-lg-5 w-100 ms-auto">
+                    <h4 class="fw-semibold text-dark mb-4">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        Eligibility Result
+                    </h4>
+
+                    <div class="row g-4 mb-4">
+
+                        <div class="col-12 col-md-6">
+                            <small class="text-secondary d-block mb-1">
+                                Customer Name
+                            </small>
+                            <h6 class="fw-semibold mb-0 text-break">
+                                {{ customerName || 'N/A' }}
+                            </h6>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <small class="text-secondary d-block mb-1">
+                                PAN Number
+                            </small>
+                            <h6 class="fw-semibold mb-0 text-break">
+                                {{ panNumber || 'N/A' }}
+                            </h6>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <small class="text-secondary d-block mb-1">
+                                Monthly Income
+                            </small>
+                            <h6 class="fw-semibold mb-0">
+                                {{ montlyIncome != null
+                                ? (montlyIncome | currency:'INR':'symbol':'1.2-2')
+                                : 'N/A' }}
+                            </h6>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <small class="text-secondary d-block mb-1">
+                                CIBIL Score
+                            </small>
+                            <h6 class="fw-semibold mb-0">
+                                {{ CibilScore ?? 'N/A' }}
+                            </h6>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <small class="text-secondary d-block mb-1">
+                                Loan Amount
+                            </small>
+                            <h6 class="fw-semibold mb-0">
+                                {{ loanAmount != null
+                                ? (loanAmount | currency:'INR':'symbol':'1.0-0')
+                                : 'N/A' }}
+                            </h6>
+                        </div>
+
+                    </div>
+
+                    <div class="rounded-3 p-3 p-md-4 text-center mt-3" [ngClass]="{
+                 'bg-success-subtle text-success-emphasis': Status?.toUpperCase() === 'APPROVED',
+                 'bg-danger-subtle text-danger-emphasis': Status?.toUpperCase() === 'REJECTED',
+                 'bg-warning-subtle text-dark': Status?.toUpperCase() === 'PENDING'
+               }">
+
+                        <h4 class="fw-semibold mb-2 text-break">
+                            <i class="bi me-2" [ngClass]="{
+                   'bi-check-circle-fill': Status?.toUpperCase() === 'APPROVED',
+                   'bi-x-circle-fill': Status?.toUpperCase() === 'REJECTED',
+                   'bi-clock-fill': Status?.toUpperCase() === 'PENDING'
+                 }"></i>
+                            {{ Status || 'Eligibility Status' }}
+                        </h4>
+
+                        <p class="mb-0">
+                            {{ mssg }}
+                        </p>
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

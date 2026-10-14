@@ -1,0 +1,258 @@
+<div class="container-fluid min-vh-100 bg-light p-0">
+
+    <app-credit-officer-sidebar></app-credit-officer-sidebar>
+
+    <main class="main-content p-3 p-md-4">
+
+        <div class="mb-4">
+            <h3 class="fw-bold mb-1">Eligibility Check</h3>
+            <p class="text-muted mb-0">
+                Check customer eligibility and approve or reject the application.
+            </p>
+        </div>
+
+        <div *ngIf="message" class="alert alert-info alert-dismissible fade show" role="alert">
+
+            {{ message }}
+
+            <button type="button" class="btn-close" aria-label="Close" (click)="message = ''">
+            </button>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0">Loan Officer - Eligibility Check</h5>
+            </div>
+
+            <div class="card-body p-4">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-12 col-md-8">
+
+                        <label for="customerSelect" class="form-label fw-semibold">
+                            Select Pending Customer
+                        </label>
+
+                        <select id="customerSelect" class="form-select" [(ngModel)]="selectedEligibilityId"
+                            [disabled]="pendingList.length === 0">
+
+                            <option [ngValue]="null">
+                            </option>
+
+                            <option *ngFor="let customer of pendingList" [ngValue]="getEligibilityId(customer)"
+                                [disabled]="getEligibilityId(customer) == null">
+
+                                {{ customer.FullName || customer.fullName || 'Unknown Customer' }}
+                                -
+                                {{ getEligibilityId(customer) ?? 'ID unavailable' }}
+                                -
+                                {{ customer.panNo || customer.PanNo || 'PAN unavailable' }}
+
+                            </option>
+
+                        </select>
+
+                        <small *ngIf="pendingList.length === 0" class="text-muted d-block mt-2">
+                            No pending customers found.
+                        </small>
+
+                    </div>
+
+                    <div class="col-12 col-md-4">
+
+                        <button type="button" class="btn btn-primary w-100" [disabled]="selectedEligibilityId == null"
+                            (click)="checkEligibility()">
+
+                            <i class="bi bi-search me-1"></i>
+                            Check Eligibility
+
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4" *ngIf="selectedCustomer">
+
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0">Customer Eligibility Details</h5>
+            </div>
+
+            <div class="card-body p-4">
+
+                <div class="row g-4">
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            Eligibility ID
+                        </label>
+                        <h6 class="fw-semibold">
+                            {{ getEligibilityId(selectedCustomer) ?? 'N/A' }}
+                        </h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            Customer Name
+                        </label>
+                        <h6 class="fw-semibold">
+                            {{
+                            selectedCustomer.FullName
+                            || selectedCustomer.fullName
+                            || 'N/A'
+                            }}
+                        </h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            PAN Number
+                        </label>
+                        <h6 class="fw-semibold">
+                            {{
+                            selectedCustomer.panNo
+                            || selectedCustomer.PanNo
+                            || selectedCustomer.panNumber
+                            || 'N/A'
+                            }}
+                        </h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            Monthly Income
+                        </label>
+                        <h6 class="fw-semibold">
+                            {{
+                            (selectedCustomer.monthlyIncome
+                            ?? selectedCustomer.MonthlyIncome) != null
+                            ? (
+                            (selectedCustomer.monthlyIncome
+                            ?? selectedCustomer.MonthlyIncome)
+                            | currency:'INR':'symbol':'1.0-0'
+                            )
+                            : 'N/A'
+                            }}
+                        </h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            CIBIL Score
+                        </label>
+                        <h6 class="fw-semibold">
+                            {{
+                            selectedCustomer.Score
+                            ?? selectedCustomer.CibilScore
+                            ?? selectedCustomer.cibilScore
+                            ?? 'N/A'
+                            }}
+                        </h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            Eligible Loan Amount
+                        </label>
+                        <h6 class="fw-semibold">
+                            {{
+                            (selectedCustomer.loanAmount
+                            ?? selectedCustomer.LoanAmount) != null
+                            ? (
+                            (selectedCustomer.loanAmount
+                            ?? selectedCustomer.LoanAmount)
+                            | currency:'INR':'symbol':'1.0-0'
+                            )
+                            : 'N/A'
+                            }}
+                        </h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small mb-1">
+                            Eligibility Status
+                        </label>
+                        <div>
+                            <span class="badge" [ngClass]="{
+                      'bg-warning text-dark':
+                        (selectedCustomer.status || selectedCustomer.Status || 'PENDING') === 'PENDING',
+                      'bg-success':
+                        (selectedCustomer.status || selectedCustomer.Status) === 'APPROVED',
+                      'bg-danger':
+                        (selectedCustomer.status || selectedCustomer.Status) === 'REJECTED'
+                    }">
+                                {{
+                                selectedCustomer.status
+                                || selectedCustomer.Status
+                                || 'PENDING'
+                                }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-12" *ngIf="selectedCustomer.RejectionReason
+                      || selectedCustomer.rejectionReason">
+
+                        <label class="form-label text-muted small mb-1">
+                            Previous Rejection Reason
+                        </label>
+
+                        <p class="mb-0">
+                            {{
+                            selectedCustomer.RejectionReason
+                            || selectedCustomer.rejectionReason
+                            }}
+                        </p>
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mb-4">
+
+                    <label for="rejectionReason" class="form-label fw-semibold">
+                        Rejection Reason
+                    </label>
+
+                    <textarea id="rejectionReason" class="form-control" rows="3" [(ngModel)]="rejectionReason"
+                        placeholder="Enter reason if rejecting this application">
+          </textarea>
+
+                    <div class="form-text">
+                        Rejection reason is required only when rejecting.
+                    </div>
+
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <button type="button" class="btn btn-success px-4" (click)="approveEligibility()">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        Approve
+                    </button>
+
+                    <button type="button" class="btn btn-danger px-4" (click)="rejectEligibility()">
+
+                        <i class="bi bi-x-circle me-1"></i>
+                        Reject
+                    </button>
+
+                    <button type="button" class="btn btn-secondary px-4" (click)="closeDetails()">
+
+                        <i class="bi bi-x-lg me-1"></i>
+                        Close
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+</div>
