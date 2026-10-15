@@ -1,4 +1,5 @@
 
+import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -23,14 +24,32 @@ export const routes: Routes = [
     loadComponent:()=>
     import('./features/cibil/pages/cibil-score/cibil-score')
     .then(m=>m.CibilScore)
-  
   },
+
   {
     path:'customer/eligibility-check',
     loadComponent:()=>
     import('./features/cibil/pages/eligibility-check/eligibility-check')
     .then(m=>m.EligibilityCheck)
 },
+{
+path:'officer/kyc-verification',
+loadComponent:()=>
+import('./features/Kyc/pages/officer-verify-kyc/officer-verify-kyc')
+.then(m=>m.OfficerVerifyKyc)
+  
+},
+{
+path:'customer/kyc',
+loadComponent:()=>
+import('./features/Kyc/pages/customer-kyc/customer-kyc')
+.then(m=>m.CustomerKyc)
+
+},
+
+
+
+
 {
 path:'officer/customers',
 loadComponent:()=>
@@ -40,28 +59,28 @@ loadComponent:()=>
 
 
 
-  // {
-  //   path: '',
-  //   redirectTo: 'customer/dashboard',
-  //   pathMatch: 'full'
-  // }
-  
   {
     path: '',
-    redirectTo: 'officer/dashboard',
+    redirectTo: 'customer/dashboard',
     pathMatch: 'full'
   }
-  ,
-
+  
   // {
-  //   path: '**',
-  //   redirectTo: 'customer/dashboard'
+  //   path: '',
+  //   redirectTo: 'officer/dashboard',
+  //   pathMatch: 'full'
   // }
+  ,
 
   {
     path: '**',
-    redirectTo: 'officer/dashboard'
+    redirectTo: 'customer/dashboard'
   }
+
+  // {
+  //   path: '**',
+  //   redirectTo: 'officer/dashboard'
+  // }
 
     
 ];

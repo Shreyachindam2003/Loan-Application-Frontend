@@ -10,7 +10,6 @@
   z-index: 1000;
 }
 
-/* Sidebar */
 .sidebar {
   width: 100%;
   height: 100%;
@@ -21,7 +20,6 @@
   transition: left 0.3s ease;
 }
 
-/* Heading */
 .sidebar-brand {
   padding: 30px 15px;
   text-align: center;
@@ -35,7 +33,6 @@
   margin-bottom: 12px;
 }
 
-/* Menu links */
 .menu-link {
   display: flex;
   align-items: center;

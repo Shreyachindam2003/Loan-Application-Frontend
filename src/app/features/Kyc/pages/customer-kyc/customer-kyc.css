@@ -1,0 +1,12 @@
+.kyc-content {
+  min-width: 0;
+  width: 100%;
+  margin-left: 220px;
+}
+
+@media (max-width: 768px) {
+  .kyc-content {
+    margin-left: 0;
+    padding: 12px !important;
+  }
+}

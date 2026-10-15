@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -27,7 +27,10 @@ export class CibilOfficer implements OnInit {
   rejectionReason = '';
   message = '';
 
-  constructor(private service: EligibiltyService) { }
+  constructor(
+    private service: EligibiltyService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     this.getPendingDetails();
@@ -36,68 +39,42 @@ export class CibilOfficer implements OnInit {
   getPendingDetails(): void {
     this.service.getPendingDetails().subscribe({
       next: (res: any) => {
-        console.log('Pending API response:', res);
-
-        const data =
-          res?.data?.data ??
-          res?.data?.content ??
-          res?.data ??
-          res?.content ??
-          res;
-
-        if (Array.isArray(data)) {
-          this.pendingList = data;
-        } else if (Array.isArray(data?.content)) {
-          this.pendingList = data.content;
-        } else {
-          this.pendingList = [];
-          console.error('Unexpected pending response:', data);
-        }
+        this.pendingList = res?.data ?? [];
+        this.cdr.detectChanges();
       },
-
       error: (err: any) => {
         console.error('Pending API error:', err);
         this.message = 'Unable to load pending customers.';
+        this.cdr.detectChanges();
       }
     });
   }
 
   getEligibilityId(customer: any): number | string | null {
-    const id =
-      customer?.eligibilityId ??
-      customer?.EligibilityId ??
-      customer?.eligibilityID ??
-      customer?.eligibility_id ??
-      customer?.eligibilityid;
-
-    return id ?? null;
+    return customer?.eligibilityId ?? null;
   }
 
-  // Show selected customer details
   checkEligibility(): void {
     this.message = '';
     this.rejectionReason = '';
 
-    if (
-      this.selectedEligibilityId == null ||
-      this.selectedEligibilityId === ''
-    ) {
+    if (this.selectedEligibilityId == null ||
+      this.selectedEligibilityId === '') {
       this.message = 'Please select a customer first.';
       return;
     }
 
-    const customer = this.pendingList.find(
-      (item: any) =>
-        String(this.getEligibilityId(item)) ===
+    this.selectedCustomer = this.pendingList.find(
+      customer =>
+        String(customer.eligibilityId) ===
         String(this.selectedEligibilityId)
-    );
+    ) ?? null;
 
-    if (!customer) {
-      this.message = 'Customer not found. Please refresh the list.';
-      return;
+    if (!this.selectedCustomer) {
+      this.message = 'Customer not found.';
     }
 
-    this.selectedCustomer = customer;
+    this.cdr.detectChanges();
   }
 
   approveEligibility(): void {
@@ -113,27 +90,18 @@ export class CibilOfficer implements OnInit {
       return;
     }
 
-    this.message = '';
-
     this.service.getEligibiltyApproved(Number(id)).subscribe({
-      next: (res: any) => {
-
-        console.log('Approve response:', res);
+      next: () => {
         alert('Eligibility approved successfully.');
 
-        this.selectedCustomer = null;
-        this.selectedEligibilityId = null;
-        this.rejectionReason = '';
-
+        this.closeDetails();
         this.getPendingDetails();
       },
-
       error: (err: any) => {
         console.error('Approve API error:', err);
-
         this.message =
-          err?.error?.message ||
-          'Unable to approve eligibility.';
+          err?.error?.message || 'Unable to approve eligibility.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -156,31 +124,21 @@ export class CibilOfficer implements OnInit {
       return;
     }
 
-    this.message = '';
-
     this.service.getEligibiltyReject(
       Number(id),
       this.rejectionReason.trim()
     ).subscribe({
-      next: (res: any) => {
-        console.log('Reject response:', res);
-
+      next: () => {
         alert('Eligibility rejected successfully.');
 
-
-        this.selectedCustomer = null;
-        this.selectedEligibilityId = null;
-        this.rejectionReason = '';
-
+        this.closeDetails();
         this.getPendingDetails();
       },
-
       error: (err: any) => {
         console.error('Reject API error:', err);
-
         this.message =
-          err?.error?.message ||
-          'Unable to reject eligibility.';
+          err?.error?.message || 'Unable to reject eligibility.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -190,5 +148,7 @@ export class CibilOfficer implements OnInit {
     this.selectedEligibilityId = null;
     this.rejectionReason = '';
     this.message = '';
+
+    this.cdr.detectChanges();
   }
 }

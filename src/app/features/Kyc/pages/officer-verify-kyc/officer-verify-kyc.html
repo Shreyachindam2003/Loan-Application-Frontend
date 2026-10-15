@@ -1,0 +1,278 @@
+<div class="min-vh-100 bg-light">
+
+  <app-credit-officer-sidebar></app-credit-officer-sidebar>
+
+  <main class="p-3 p-md-4" style="margin-left: 220px; min-width: 0;">
+
+    <div *ngIf="!selectedCustomer" class="card border-0 shadow-sm">
+      <div class="card-body p-3 p-md-4">
+
+        <h3 class="fw-bold mb-2">Customer KYC Verification</h3>
+        <p class="text-muted mb-4">
+          Review customers' uploaded KYC documents.
+        </p>
+
+        <div *ngIf="message" class="alert alert-info">
+          {{ message }}
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle mb-0">
+
+            <thead class="table-dark">
+              <tr>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Document Type</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let customer of documents">
+
+                <td>{{ customer.customerName }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.mobile }}</td>
+                <td>{{ customer.documentType }}</td>
+
+                <td>
+                  <span class="badge bg-warning text-dark">
+                    {{ customer.verificationStatus }}
+                  </span>
+                </td>
+
+                <td>
+                  <button type="button" class="btn btn-primary btn-sm" (click)="viewKyc(customer)">
+                    <i class="bi bi-eye me-1"></i>
+                    View KYC
+                  </button>
+                </td>
+
+              </tr>
+
+              <tr *ngIf="documents.length === 0">
+                <td colspan="6" class="text-center text-muted py-4">
+                  No pending KYC documents found.
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div *ngIf="selectedCustomer" class="card border-0 shadow-sm">
+      <div class="card-body p-3 p-md-4">
+
+        <div class="d-flex flex-wrap justify-content-between
+                    align-items-center gap-2 mb-4">
+
+          <div>
+            <h3 class="fw-bold mb-1">KYC Documents</h3>
+            <p class="text-muted mb-0">
+              Select documents to approve or reject.
+            </p>
+          </div>
+
+          <button type="button" class="btn btn-outline-secondary" [disabled]="loading" (click)="backToList()">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Customers
+          </button>
+
+        </div>
+
+
+        <div class="card border mb-4">
+          <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+              <i class="bi bi-person-circle me-2"></i>
+              Customer Details
+            </h5>
+
+            <div class="row g-3">
+
+              <div class="col-md-4">
+                <span class="text-muted d-block small">Customer Name</span>
+                <strong>{{ selectedCustomer.customerName }}</strong>
+              </div>
+
+              <div class="col-md-4">
+                <span class="text-muted d-block small">Email</span>
+                <strong>{{ selectedCustomer.email }}</strong>
+              </div>
+
+              <div class="col-md-4">
+                <span class="text-muted d-block small">Mobile</span>
+                <strong>{{ selectedCustomer.mobile }}</strong>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+        <div *ngIf="message" class="alert alert-info">
+          {{ message }}
+        </div>
+
+
+        <div class="d-flex flex-wrap justify-content-between
+                    align-items-center gap-2 mb-3">
+
+          <h5 class="fw-bold mb-0">Uploaded Documents</h5>
+
+          <span class="badge bg-secondary">
+            {{ customerDocuments.length }} Documents
+          </span>
+
+        </div>
+
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle mb-0">
+
+            <thead class="table-dark">
+              <tr>
+
+                <th style="width: 60px;">
+                  <input type="checkbox" class="form-check-input" aria-label="Select all pending documents"
+                    [checked]="allSelected" [disabled]="loading || customerDocuments.length === 0"
+                    (change)="selectAll($event)">
+                </th>
+
+                <th>Document Type</th>
+                <th>Status</th>
+                <th>Action</th>
+
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let doc of customerDocuments">
+
+                <td>
+                  <input type="checkbox" class="form-check-input" [checked]="doc.selected"
+                    [disabled]="loading || doc.verificationStatus !== 'PENDING'"
+                    [attr.aria-label]="'Select ' + doc.documentType"
+                    (change)="doc.selected = $any($event.target).checked; updateSelection()">
+                </td>
+
+                <td>
+                  <strong>{{ doc.documentType }}</strong>
+                  <div class="small text-muted">
+                    Document ID: {{ doc.documentId }}
+                  </div>
+                </td>
+
+                <td>
+                  <span class="badge" [ngClass]="{
+                      'bg-warning text-dark': doc.verificationStatus === 'PENDING',
+                      'bg-success': doc.verificationStatus === 'VERIFIED' || doc.verificationStatus === 'APPROVED',
+                      'bg-danger': doc.verificationStatus === 'REJECTED'
+                    }">
+                    {{ doc.verificationStatus }}
+                  </span>
+                </td>
+
+                <td>
+                  <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="loading"
+                    (click)="viewDocument(doc.documentId)">
+                    <i class="bi bi-eye me-1"></i>
+                    View Document
+                  </button>
+                </td>
+
+              </tr>
+
+              <tr *ngIf="customerDocuments.length === 0">
+                <td colspan="4" class="text-center text-muted py-4">
+                  No documents uploaded by this customer.
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+
+        <div *ngIf="customerDocuments.length > 0" class="d-flex flex-wrap gap-2 mt-4">
+
+          <button type="button" class="btn btn-success" [disabled]="loading || getSelected().length === 0"
+            (click)="approveSelected()">
+
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1">
+            </span>
+
+            <i *ngIf="!loading" class="bi bi-check-circle me-1"></i>
+
+            Approve Selected
+          </button>
+
+          <button type="button" class="btn btn-danger" [disabled]="loading || getSelected().length === 0"
+            (click)="rejectSelected()">
+
+            <i class="bi bi-x-circle me-1"></i>
+            Reject Selected
+          </button>
+
+        </div>
+
+
+        <div *ngIf="showRejectForm" class="card border-danger mt-4">
+
+          <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              Reject Selected Documents
+            </h5>
+          </div>
+
+          <div class="card-body">
+
+            <p class="text-muted">
+              Selected documents:
+              <strong>{{ getSelected().length }}</strong>
+            </p>
+
+            <label for="rejectionReason" class="form-label fw-semibold">
+              Rejection Reason <span class="text-danger">*</span>
+            </label>
+
+            <textarea id="rejectionReason" class="form-control" rows="3" name="rejectionReason"
+              [(ngModel)]="rejectionReason" [disabled]="loading"
+              placeholder="Enter the reason for rejecting these documents">
+            </textarea>
+
+            <div class="d-flex flex-wrap gap-2 mt-3">
+
+              <button type="button" class="btn btn-danger" [disabled]="loading || !rejectionReason.trim()"
+                (click)="confirmReject()">
+
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1">
+                </span>
+
+                Confirm Reject
+              </button>
+
+              <button type="button" class="btn btn-outline-secondary" [disabled]="loading"
+                (click)="showRejectForm = false; rejectionReason = ''">
+                Cancel
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>

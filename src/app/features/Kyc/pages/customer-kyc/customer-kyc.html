@@ -1,0 +1,152 @@
+<div class="container-fluid bg-light min-vh-100 p-0">
+  <div class="d-flex min-vh-100">
+
+    <app-customer-sidebar></app-customer-sidebar>
+
+    <main class="kyc-content flex-grow-1 p-3 p-md-4">
+      <div class="mb-4">
+        <h2 class="fw-bold">KYC Verification</h2>
+        <p class="text-muted">
+          Upload and manage your KYC documents.
+        </p>
+      </div>
+
+      <div *ngIf="message" class="alert alert-info alert-dismissible">
+        {{ message }}
+        <button type="button" class="btn-close" (click)="message = ''">
+        </button>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white py-3">
+          <h5 class="mb-0">Upload KYC Documents</h5>
+        </div>
+
+        <div class="card-body p-3 p-md-4">
+
+          <form (ngSubmit)="uploadDocument()">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Document Type
+              </label>
+
+              <select class="form-select" name="documentType" [(ngModel)]="selectedType" required>
+
+                <option value="">-- Select Document --</option>
+
+                <option *ngFor="let type of getAvailableTypes()" [value]="type.value">
+                  {{ type.name }}
+                </option>
+
+              </select>
+
+              <small *ngIf="getAvailableTypes().length === 0" class="text-success">
+                All document types are uploaded.
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Choose Document
+              </label>
+
+              <input id="kycFile" type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png"
+                (change)="onFileSelected($event)" required>
+
+              <small class="text-muted">
+                PDF, JPG, JPEG or PNG. Maximum size: 5 MB.
+              </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 w-sm-auto" [disabled]="!selectedType || !selectedFile">
+              Upload Document
+            </button>
+
+          </form>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-dark text-white py-3">
+          <h5 class="mb-0">Uploaded Documents</h5>
+        </div>
+
+        <div class="card-body p-0">
+
+          <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle mb-0">
+
+              <thead class="table-light">
+                <tr>
+                  <th>Document Name</th>
+                  <th class="text-center">View Document</th>
+                  <th class="text-center">Status</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <tr *ngFor="let doc of documents">
+
+                  <td>
+                    <span *ngIf="doc.documentType === 'AADHAAR'">
+                      Aadhaar Card
+                    </span>
+
+                    <span *ngIf="doc.documentType === 'PAN'">
+                      PAN Card
+                    </span>
+
+                    <span *ngIf="doc.documentType === 'SALARY_SLIP'">
+                      Salary Slip
+                    </span>
+
+                    <span *ngIf="
+                      doc.documentType !== 'AADHAAR' &&
+                      doc.documentType !== 'PAN' &&
+                      doc.documentType !== 'SALARY_SLIP'">
+                      {{ doc.documentType }}
+                    </span>
+                  </td>
+
+                  <td class="text-center">
+                    <button class="btn btn-success btn-sm" type="button" (click)="viewDocument(doc.documentId)">
+                      View
+                    </button>
+                  </td>
+
+                  <td class="text-center">
+                    <span class="badge" [ngClass]="getStatusClass(doc.verificationStatus)">
+                      {{ doc.verificationStatus }}
+                    </span>
+                  </td>
+
+                  <td class="text-center">
+                    <button class="btn btn-danger btn-sm" type="button" (click)="deleteDocument(doc.documentId)">
+                      Delete
+                    </button>
+                  </td>
+
+                </tr>
+
+                <tr *ngIf="documents.length === 0">
+                  <td colspan="4" class="text-center text-muted py-4">
+                    No documents uploaded yet.
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CustomerSidebar } from '../../../../core/theme/customer-sidebar/customer-sidebar';
 import { EligibiltyService } from '../../services/eligibilty-service';
 
@@ -11,7 +11,7 @@ import { EligibiltyService } from '../../services/eligibilty-service';
 })
 export class EligibilityCheck implements OnInit {
 
-  constructor(private service: EligibiltyService) {
+  constructor(private service: EligibiltyService, private cdr: ChangeDetectorRef) {
 
   }
 
@@ -29,12 +29,18 @@ export class EligibilityCheck implements OnInit {
   getEligibiltyResult() {
     this.service.getElibilityDetails(1).subscribe({
       next: (res: any) => {
+          console.log('Eligibility API Response:', res);
+  console.log('Backend Status:', res.data.status);
+
+  
         this.customerName = res.data.FullName;
         this.panNumber = res.data.panNo;
         this.montlyIncome = res.data.monthlyIncome;
         this.CibilScore = res.data.Score;
         this.Status = res.data.status;
         this.loanAmount = res.data.loanAmount;
+            this.cdr.detectChanges();
+
 
         if (this.Status?.toUpperCase() === 'APPROVED') {
           this.mssg = 'Congratulations! Your loan eligibility is approved.';

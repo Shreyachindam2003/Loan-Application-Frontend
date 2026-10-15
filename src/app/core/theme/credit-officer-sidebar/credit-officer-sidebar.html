@@ -11,11 +11,45 @@
       <span>Dashboard</span>
     </a>
 
-    <a routerLink="/officer/customers" class="menu-link">
-      <i class="bi bi-people"></i>
-      <span>Customer Management</span>
-      <i class="bi bi-chevron-down ms-auto"></i>
-    </a>
+
+<a class="menu-link"
+   data-bs-toggle="collapse"
+   href="#customerMenu"
+   role="button"
+   aria-expanded="false"
+   aria-controls="customerMenu">
+
+  <i class="bi bi-people"></i>
+  <span>Customer Management</span>
+  <i class="bi bi-chevron-down ms-auto"></i>
+</a>
+
+<div class="collapse" id="customerMenu">
+
+  <a routerLink="/officer/customerss" class="menu-link">
+    <i class="bi bi-person"></i>
+    <span>Customers</span>
+  </a>
+
+  <a routerLink="/officer/kyc-verification" class="menu-link">
+    <i class="bi bi-file-earmark-check"></i>
+    <span>KYC Verification</span>
+  </a>
+
+  <a routerLink="/officer/customers" class="menu-link">
+    <i class="bi bi-check-circle"></i>
+    <span>Eligibility Check</span>
+  </a>
+
+  <a routerLink="/officer/score-cards" class="menu-link">
+    <i class="bi bi-credit-card"></i>
+    <span>Score Cards</span>
+  </a>
+
+</div>
+
+
+
 
 
     <a routerLink="/officer/loans" class="menu-link">
