@@ -1,0 +1,144 @@
+<div class="container-fluid py-4">
+  <h3 class="fw-bold">My Penalties</h3>
+  <p class="text-muted">View your EMI penalty and bonus details.</p>
+
+  <div *ngIf="loading" class="text-center py-4">
+    Loading charges...
+  </div>
+
+  <div *ngIf="!loading">
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card penalty-card shadow-sm">
+          <div class="card-body">
+            <p class="text-muted">Total Penalties</p>
+            <h4 class="text-danger fw-bold">
+              {{ totalPenalty | currency:'INR':'symbol':'1.2-2' }}
+            </h4>
+            <small>₹1 per late day</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card bonus-card shadow-sm">
+          <div class="card-body">
+            <p class="text-muted">Total Bonus Charges</p>
+            <h4 class="text-success fw-bold">
+              {{ totalBonus | currency:'INR':'symbol':'1.2-2' }}
+            </h4>
+            <small>₹500 bonus charge</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+      <div class="card-body table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Charge ID</th>
+              <th>EMI Schedule ID</th>
+              <th>Penalty</th>
+              <th>Bonus</th>
+              <th>Late Days</th>
+              <th>Invoice</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of penalties">
+              <td>{{ item.chargeId }}</td>
+              <td>{{ item.emiScheduleId }}</td>
+              <td class="text-danger fw-semibold">
+                {{ item.penalty | currency:'INR':'symbol':'1.2-2' }}
+              </td>
+              <td class="text-success fw-semibold">
+                {{ item.bonus | currency:'INR':'symbol':'1.2-2' }}
+              </td>
+              <td>{{ item.lateDays }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary"
+                        (click)="viewInvoice(item)">
+                  View Invoice
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="penalties.length === 0">
+              <td colspan="6" class="text-center py-4">
+                No charge records found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showInvoice"
+     class="modal-backdrop-custom"
+     (click)="closeInvoice()">
+
+  <div class="invoice-modal" (click)="$event.stopPropagation()">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0">EMI Invoice</h5>
+      <button type="button" class="btn-close"
+              (click)="closeInvoice()"></button>
+    </div>
+
+    <div *ngIf="invoice.loading" class="text-center py-4">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Loading invoice details...</p>
+    </div>
+
+    <div *ngIf="invoice.error" class="alert alert-danger">
+      {{ invoice.error }}
+    </div>
+
+    <div *ngIf="!invoice.loading && !invoice.error">
+      <div class="invoice-line">
+        <span>EMI Amount</span>
+        <strong>
+          {{ (invoice.emiAmount ?? 0) | currency:'INR':'symbol':'1.2-2' }}
+        </strong>
+      </div>
+
+      <div class="invoice-line">
+        <span>Penalty</span>
+        <strong class="text-danger">
+          {{ (invoice.penaltyAmount ?? 0) | currency:'INR':'symbol':'1.2-2' }}
+        </strong>
+      </div>
+
+      <div class="invoice-line">
+        <span>Bonus</span>
+        <strong class="text-success">
+          {{ (invoice.bonusAmount ?? 0) | currency:'INR':'symbol':'1.2-2' }}
+        </strong>
+      </div>
+
+      <hr>
+
+      <div class="invoice-line fs-5">
+        <span>Total Payable</span>
+        <strong>
+          {{ (invoice.totalAmount ?? invoice.totalPayableAmount ?? 0)
+             | currency:'INR':'symbol':'1.2-2' }}
+        </strong>
+      </div>
+
+      <p class="text-muted mt-3 mb-0">
+        Late Days: {{ invoice.daysLate ?? 0 }}
+      </p>
+    </div>
+
+    <div class="text-end mt-4">
+      <button class="btn btn-secondary" (click)="closeInvoice()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

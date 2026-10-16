@@ -1,1 +1,42 @@
-<p>header works!</p>
+
+<header class="top-header">
+  <div class="header-title">Loan Management</div>
+
+  <div class="notification-area">
+    <button
+      class="bell-button"
+      type="button"
+      (click)="toggleNotifications()"
+      aria-label="Notifications">
+
+      🔔
+
+      <span class="unread-badge" *ngIf="unreadCount > 0">
+        {{ unreadCount }}
+      </span>
+    </button>
+
+    <div class="notification-dropdown" *ngIf="showNotifications">
+      <div class="dropdown-title">Notifications</div>
+
+      <div *ngIf="notifications.length === 0" class="empty-message">
+        No notifications
+      </div>
+
+      <button
+        class="notification-item"
+        *ngFor="let item of notifications"
+        type="button"
+[class.unread]="!item.isRead"
+        (click)="openNotification(item)">
+
+        <span>
+          {{ item.message }}
+          <small>
+            {{ item.createdAt | date:'dd MMM yyyy, h:mm a' }}
+          </small>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>

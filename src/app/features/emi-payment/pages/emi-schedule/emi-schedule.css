@@ -1,0 +1,280 @@
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.emi-page {
+  min-height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #f4f6fb;
+  color: #233650;
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.page-heading h2 {
+  margin: 0;
+  color: #17365e;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.loan-selector {
+  width: 220px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  padding: 20px;
+  border: 1px solid #e7ecf4;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #1d36580c !important;
+}
+
+.summary-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.summary-content p {
+  margin: 0 0 12px;
+  color: #748197;
+  font-size: 14px;
+}
+
+.summary-content h2 {
+  margin: 0 0 9px;
+  color: #17365e;
+  font-size: 18px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.summary-content span {
+  color: #68778d;
+  font-size: 13px;
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+.paid-icon {
+  color: #16865b;
+  background: #e4f6ec;
+}
+
+.pending-icon {
+  color: #b7790b;
+  background: #fff2d6;
+}
+
+.balance-icon {
+  color: #1769c2;
+  background: #e5efff;
+}
+
+.schedule-card {
+  overflow: hidden;
+  border: 1px solid #e7ecf4;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #1d36580c !important;
+}
+
+.table-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 22px;
+}
+
+.table-heading h3 {
+  margin: 0;
+  color: #17365e;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.loan-badge {
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: #eaf2ff;
+  color: #1769c2;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.emi-table {
+  width: 100%;
+  min-width: 1150px;
+}
+
+.emi-table th {
+  padding: 16px 12px;
+  background: #f6f8fc;
+  color: #60718a;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-top: 1px solid #edf0f6;
+  border-bottom: 1px solid #edf0f6;
+}
+
+.emi-table td {
+  padding: 16px 12px;
+  color: #526177;
+  font-size: 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid #edf0f6;
+}
+
+.emi-table tr.mat-mdc-row:hover {
+  background: #f8faff;
+}
+
+.installment-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #eaf2ff;
+  color: #1769c2;
+  font-weight: 700;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-paid {
+  background: #e4f7ed;
+  color: #16865b;
+}
+
+.status-paid .status-dot {
+  background: #16865b;
+}
+
+.status-pending {
+  background: #fff3d9;
+  color: #a96b00;
+}
+
+.status-pending .status-dot {
+  background: #d99819;
+}
+
+.status-overdue {
+  background: #ffe8e8;
+  color: #c63d3d;
+}
+
+.status-overdue .status-dot {
+  background: #c63d3d;
+}
+
+.pay-button {
+  min-width: 66px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #1769c2;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pay-button:hover:not(:disabled) {
+  background: #10549f;
+}
+
+.pay-button:disabled {
+  background: #e5e9f0;
+  color: #929bad;
+  cursor: not-allowed;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 22px;
+  border-top: 1px solid #edf0f6;
+  color: #778398;
+  font-size: 12px;
+}
+
+@media (max-width: 1000px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .emi-page {
+    padding: 14px;
+  }
+
+  .page-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .loan-selector {
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-heading,
+  .table-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+  }
+}

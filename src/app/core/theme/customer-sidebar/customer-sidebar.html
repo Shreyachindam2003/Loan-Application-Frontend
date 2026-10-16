@@ -18,11 +18,59 @@
       <i class="bi bi-chevron-down ms-auto"></i>
     </a>
 
-    <a routerLink="/emi" class="menu-link">
+    <!-- Payments Dropdown -->
+    <a
+      href="javascript:void(0)"
+      class="menu-link"
+      (click)="togglePayments()"
+      [attr.aria-expanded]="paymentsOpen">
+
       <i class="bi bi-wallet2"></i>
       <span>Payments</span>
-      <i class="bi bi-chevron-down ms-auto"></i>
+
+      <i
+        class="bi ms-auto"
+        [class.bi-chevron-down]="!paymentsOpen"
+        [class.bi-chevron-up]="paymentsOpen">
+      </i>
     </a>
+
+    @if (paymentsOpen) {
+      <div class="submenu">
+        <a
+          routerLink="/customer/emi/schedule"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="submenu-link">
+          <i class="bi bi-calendar3"></i>
+          <span>EMI Schedule</span>
+        </a>
+
+        <a
+          routerLink="/customer/emi/make-payment"
+          routerLinkActive="active"
+          class="submenu-link">
+          <i class="bi bi-credit-card"></i>
+          <span>Make Payments</span>
+        </a>
+
+        <a
+          routerLink="/customer/emi/payment-history"
+          routerLinkActive="active"
+          class="submenu-link">
+          <i class="bi bi-clock-history"></i>
+          <span>Payment History</span>
+        </a>
+
+        <a
+          routerLink="/customer/emi/my-penalties"
+          routerLinkActive="active"
+          class="submenu-link">
+          <i class="bi bi-receipt"></i>
+          <span>My Penalties</span>
+        </a>
+      </div>
+    }
 
     <a routerLink="/support" class="menu-link">
       <i class="bi bi-headset"></i>

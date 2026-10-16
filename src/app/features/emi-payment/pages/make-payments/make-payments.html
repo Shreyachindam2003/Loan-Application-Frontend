@@ -1,0 +1,112 @@
+
+<div class="payment-page">
+  <div class="payment-card">
+
+    <div class="card-header">Make EMI Payment</div>
+
+    <div class="card-body">
+
+      <div *ngIf="loading" class="message">
+        Loading EMI details...
+      </div>
+
+      <ng-container *ngIf="!loading && emi">
+
+        <div class="field">
+          <label>Loan Account No</label>
+          <div>{{ emi.loanAccountNo || ('LA' + loanAccountId) }}</div>
+        </div>
+
+        <div class="field">
+          <label>Due Date</label>
+          <div>{{ emi.dueDate ? (emi.dueDate | date:'d/M/yyyy') : '-' }}</div>
+        </div>
+
+        <div class="field">
+          <label>EMI Amount</label>
+          <div>₹{{ emi.emiAmount ?? 0 }}</div>
+        </div>
+
+        <div class="field">
+          <label>Penalty Amount</label>
+          <div>₹{{ emi.penaltyAmount ?? 0 }}</div>
+        </div>
+
+        <div class="field">
+          <label>Total Payable Amount</label>
+          <div>₹{{ emi.totalPayable ?? 0 }}</div>
+        </div>
+
+      </ng-container>
+
+      <div *ngIf="!loading && !emi" class="message error">
+        {{ errorMessage || 'No EMI is currently due for payment' }}
+      </div>
+
+      <div class="button-row">
+        <button type="button" class="pay-button"
+                [disabled]="loading || !emi || !!errorMessage"
+                (click)="payNow()">
+          Pay Now
+        </button>
+
+        <button type="button" class="breakup-button"
+                [disabled]="loading || !emiScheduleId || !!errorMessage"
+                (click)="viewBreakup()">
+          View Breakup
+        </button>
+      </div>
+
+      <div *ngIf="!loading && emi && errorMessage" class="error">
+        {{ errorMessage }}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showBreakup"
+     (click)="showBreakup = false">
+
+  <div class="breakup-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Payment Breakup</h3>
+      <button type="button" class="close-button"
+              (click)="showBreakup = false">×</button>
+    </div>
+
+    <div *ngIf="!breakup" class="message">
+      Loading breakup...
+    </div>
+
+    <div *ngIf="breakup">
+
+      <div class="field">
+        <label>EMI Amount</label>
+        <div>₹{{ breakup.emiAmount ?? 0 }}</div>
+      </div>
+
+      <div class="field">
+        <label>Penalty Amount</label>
+        <div>₹{{ breakup.penaltyAmount ?? 0 }}</div>
+      </div>
+
+      <div class="field">
+        <label>Bonus Amount</label>
+        <div>₹{{ breakup.bonusAmount ?? 0 }}</div>
+      </div>
+
+      <div class="field">
+        <label>Days Late</label>
+        <div>{{ breakup.daysLate ?? 0 }}</div>
+      </div>
+
+      <div class="field">
+        <label>Total Payable</label>
+        <div>₹{{ breakup.totalAmount ?? 0 }}</div>
+      </div>
+
+    </div>
+  </div>
+</div>

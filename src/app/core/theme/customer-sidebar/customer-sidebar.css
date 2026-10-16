@@ -50,3 +50,41 @@
     min-width: 190px;
   }
 }
+
+/* Payments submenu */
+.submenu {
+  display: flex;
+  flex-direction: column;
+  background: #12345b;
+  padding: 4px 0;
+}
+
+.submenu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 15px 11px 48px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background-color 0.2s ease;
+}
+
+.submenu-link:hover {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+.submenu-link.active {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+.menu-link {
+  cursor: pointer;
+}
+
+.menu-link,
+.submenu-link {
+  box-sizing: border-box;
+}

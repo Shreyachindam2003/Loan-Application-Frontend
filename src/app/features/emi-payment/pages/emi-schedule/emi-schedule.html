@@ -1,0 +1,157 @@
+
+<div class="emi-page">
+
+  <div class="page-heading">
+    <h2>EMI Schedule</h2>
+
+    <mat-form-field appearance="outline" class="loan-selector">
+      <mat-label>Select Loan Account</mat-label>
+      <mat-select [(value)]="selectedLoan"
+                  (selectionChange)="onLoanChange($event.value)">
+        <mat-option value="LN-TEST-007">LN-TEST-007</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <p *ngIf="loading">Loading EMI schedule...</p>
+  <p *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+      <div class="summary-content">
+        <div>
+          <p>Paid EMIs</p>
+          <h2>Count: {{ paidCount }}</h2>
+          <span>Amount: ₹{{ paidAmount | number:'1.0-0' }}</span>
+        </div>
+        <div class="summary-icon paid-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <div class="summary-content">
+        <div>
+          <p>Pending EMIs</p>
+          <h2>Count: {{ pendingCount }}</h2>
+          <span>Amount: ₹{{ pendingAmount | number:'1.0-0' }}</span>
+        </div>
+        <div class="summary-icon pending-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <div class="summary-content">
+        <div>
+          <p>Remaining Balance</p>
+          <h2>EMIs Left: {{ pendingCount }}</h2>
+          <span>Balance: ₹{{ remainingBalance | number:'1.0-0' }}</span>
+        </div>
+        <div class="summary-icon balance-icon">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+      </div>
+    </mat-card>
+
+  </div>
+
+  <mat-card class="schedule-card">
+
+    <div class="table-heading">
+      <h3>EMI Installment Details</h3>
+      <span class="loan-badge">{{ selectedLoan }}</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="emiSchedules" class="emi-table">
+
+        <ng-container matColumnDef="installment">
+          <th mat-header-cell *matHeaderCellDef>Installment</th>
+          <td mat-cell *matCellDef="let emi">
+            <span class="installment-number">{{ emi.installmentNo }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dueDate">
+          <th mat-header-cell *matHeaderCellDef>Due Date</th>
+          <td mat-cell *matCellDef="let emi">{{ emi.dueDate }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="emi">
+          <th mat-header-cell *matHeaderCellDef>EMI</th>
+          <td mat-cell *matCellDef="let emi">
+            ₹{{ emi.emiAmount | number:'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="principal">
+          <th mat-header-cell *matHeaderCellDef>Principal</th>
+          <td mat-cell *matCellDef="let emi">
+            ₹{{ emi.principalAmount | number:'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="interest">
+          <th mat-header-cell *matHeaderCellDef>Interest</th>
+          <td mat-cell *matCellDef="let emi">
+            ₹{{ emi.interestAmount | number:'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="openingBalance">
+          <th mat-header-cell *matHeaderCellDef>Opening Balance</th>
+          <td mat-cell *matCellDef="let emi">
+            ₹{{ emi.openingBalance | number:'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="closingBalance">
+          <th mat-header-cell *matHeaderCellDef>Closing Balance</th>
+          <td mat-cell *matCellDef="let emi">
+            ₹{{ emi.closingBalance | number:'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let emi">
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-paid': emi.status === 'PAID',
+                    'status-pending': emi.status === 'PENDING',
+                    'status-overdue': emi.status === 'OVERDUE'
+                  }">
+              <span class="status-dot"></span>
+              {{ emi.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let emi">
+            <button type="button"
+                    class="pay-button"
+                    [disabled]="!isPayEnabled(emi)"
+                    (click)="payEmi(emi)">
+              {{ emi.status === 'PAID' ? 'Paid' : 'Pay' }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      </table>
+    </div>
+
+    <div class="table-footer">
+      Showing {{ emiSchedules.length }} installments
+    </div>
+
+  </mat-card>
+</div>

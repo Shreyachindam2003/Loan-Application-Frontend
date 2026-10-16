@@ -1,0 +1,90 @@
+
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-1">Payment History</h3>
+      <p class="text-muted mb-0">View your previous EMI payments.</p>
+    </div>
+
+    <!-- <button
+      class="btn btn-outline-primary"
+      (click)="loadPaymentHistory()"
+      [disabled]="loading">
+      Refresh
+    </button> -->
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Loading payment history...</p>
+  </div>
+
+  <div *ngIf="!loading && errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2"
+            (click)="loadPaymentHistory()">
+      Try Again
+    </button>
+  </div>
+
+  <div *ngIf="!loading && !errorMessage" class="card shadow-sm border-0">
+    <div class="card-body">
+      <div class="table-responsive"
+           *ngIf="payments.length > 0; else noPayments">
+
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Payment ID</th>
+              <th>EMI Schedule ID</th>
+              <th>Amount</th>
+              <th>Payment Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let payment of payments">
+              <td>{{ payment.paymentId ?? payment.id ?? '-' }}</td>
+
+              <td>{{ payment.emiScheduleId ?? '-' }}</td>
+
+              <td>
+                {{ payment.amount ?? payment.totalAmount ?? payment.paidAmount ?? 0
+                   | currency:'INR':'symbol':'1.2-2' }}
+              </td>
+
+              <td>
+                {{ payment.paymentDate ?? payment.createdAt ?? payment.paidAt
+                   ? (payment.paymentDate ?? payment.createdAt ?? payment.paidAt
+                      | date:'dd MMM yyyy, hh:mm a')
+                   : '-' }}
+              </td>
+
+              <td>
+                <span class="badge"
+                  [ngClass]="{
+                    'text-bg-success': (payment.status ?? payment.paymentStatus) === 'SUCCESS'
+                      || (payment.status ?? payment.paymentStatus) === 'COMPLETED',
+                    'text-bg-warning': (payment.status ?? payment.paymentStatus) === 'PENDING',
+                    'text-bg-danger': (payment.status ?? payment.paymentStatus) === 'FAILED'
+                  }">
+                  {{ payment.status ?? payment.paymentStatus ?? 'UNKNOWN' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noPayments>
+        <div class="text-center py-5">
+          <h5>No payments found</h5>
+          <p class="text-muted mb-0">
+            Your completed payments will appear here.
+          </p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

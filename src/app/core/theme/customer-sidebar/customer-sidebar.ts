@@ -1,12 +1,18 @@
 
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-customer-sidebar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './customer-sidebar.html',
   styleUrl: './customer-sidebar.css'
 })
-export class CustomerSidebar {}
+export class CustomerSidebar {
+  paymentsOpen = false;
+
+  togglePayments(): void {
+    this.paymentsOpen = !this.paymentsOpen;
+  }
+}

@@ -1,0 +1,144 @@
+
+.payment-page {
+  min-height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 15px;
+  background: #f1f3f8;
+}
+
+.payment-card {
+  width: 100%;
+  max-width: 360px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  background: #0878d1;
+  color: white;
+  text-align: center;
+  padding: 20px 12px;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 18px;
+}
+
+.field {
+  padding: 10px 0;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 9px;
+}
+
+.field div {
+  font-size: 14px;
+  color: #555555;
+  overflow-wrap: anywhere;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.pay-button,
+.breakup-button {
+  flex: 1;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pay-button {
+  background: #16834a;
+  color: white;
+}
+
+.pay-button:hover {
+  background: #116c3c;
+}
+
+.breakup-button {
+  background: #0878d1;
+  color: white;
+}
+
+.breakup-button:hover {
+  background: #0664b0;
+}
+
+.message {
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.error {
+  color: #b42318;
+  background: #fff0f0;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.breakup-card {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.close-button {
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.pay-button:disabled,
+.breakup-button:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

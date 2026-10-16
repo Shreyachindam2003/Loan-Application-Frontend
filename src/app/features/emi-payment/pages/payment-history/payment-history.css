@@ -1,0 +1,22 @@
+
+:host {
+  display: block;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.table th {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.table td {
+  font-size: 14px;
+}
+
+.badge {
+  padding: 7px 10px;
+  font-size: 12px;
+}
