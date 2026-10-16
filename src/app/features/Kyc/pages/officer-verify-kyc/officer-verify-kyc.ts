@@ -6,10 +6,12 @@ import { RouterLink } from '@angular/router';
 
 import { VerifyKycOfficer } from '../../kyc-services/verify-kyc-officer';
 import { CreditOfficerSidebar } from '../../../../core/theme/credit-officer-sidebar/credit-officer-sidebar';
+import { NotificationService } from '../../../notifications/notification.service';
+import { Header } from '../../../../core/theme/header/header';
 
 @Component({
   standalone: true,
-  imports: [ CommonModule, FormsModule, RouterLink,CreditOfficerSidebar],
+  imports: [ CommonModule, FormsModule, RouterLink,CreditOfficerSidebar,Header],
   selector: 'app-officer-verify-kyc',
   styleUrl: './officer-verify-kyc.css',
   templateUrl: './officer-verify-kyc.html'
@@ -30,11 +32,15 @@ export class OfficerVerifyKyc implements OnInit {
 
   constructor(
     private service: VerifyKycOfficer,
+        private service1:NotificationService,
+  
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
     this.getDocuments();
+      this.getOfficerNotifications();
+
   }
 
   getDocuments() {
@@ -198,4 +204,45 @@ export class OfficerVerifyKyc implements OnInit {
 
     this.cdr.detectChanges();
   }
+
+notifications: any[] = [];
+unreadCount = 0;
+notificationMessage = '';
+
+officerUserId = 3; 
+
+getOfficerNotifications(): void {
+  this.service1.getNotifications(this.officerUserId)
+    .subscribe({
+      next: (res: any) => {
+        this.notifications = res.data || res || [];
+
+        this.unreadCount = this.notifications.filter(
+          (notification: any) => !notification.isRead
+        ).length;
+      },
+      error: (err: any) => {
+        console.error('Unable to load officer notifications', err);
+      }
+    });
+}
+
+markAsRead(notification: any): void {
+  this.service1
+    .markAsRead(notification.notificationId)
+    .subscribe({
+      next: () => {
+        notification.isRead = true;
+
+        this.unreadCount = this.notifications.filter(
+          (item: any) => !item.isRead
+        ).length;
+      },
+      error: (err: any) => {
+        console.error('Unable to mark as read', err);
+      }
+    });
+}
+
+
 }

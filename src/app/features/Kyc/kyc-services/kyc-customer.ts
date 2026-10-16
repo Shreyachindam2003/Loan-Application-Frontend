@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 })
 export class KycCustomer {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   url = 'http://localhost:8080/api/v1/kyc/customers/';
 

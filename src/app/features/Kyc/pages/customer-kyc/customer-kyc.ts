@@ -5,11 +5,12 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CustomerSidebar } from '../../../../core/theme/customer-sidebar/customer-sidebar';
 import { KycCustomer } from '../../kyc-services/kyc-customer';
-
+import { NotificationService } from '../../../notifications/notification.service';
+import { Header } from '../../../../core/theme/header/header';
 @Component({
   standalone: true,
   selector: 'app-customer-kyc',
-  imports: [CommonModule, FormsModule, CustomerSidebar],
+  imports: [CommonModule, FormsModule, CustomerSidebar,Header],
   templateUrl: './customer-kyc.html',
   styleUrl: './customer-kyc.css'
 })
@@ -17,10 +18,11 @@ export class CustomerKyc implements OnInit {
 
   constructor(
     private service: KycCustomer,
+    private service1:NotificationService,
     private cdr: ChangeDetectorRef
   ) { }
 
-  userId = 4;
+  userId = 1;
 
   documentTypes = [
     { name: 'Aadhaar Card', value: 'AADHAAR' },
@@ -32,11 +34,17 @@ export class CustomerKyc implements OnInit {
   selectedFile: File | null = null;
   documents: any[] = [];
   message = '';
+  notifications: any[] = [];
+unreadCount = 0;
+notificationMessage = '';
 
   ngOnInit(): void {
     this.getDocuments();
+      this.getNotifications();
+
   }
 
+  
   getDocuments(): void {
     this.service.getDocuments(this.userId).subscribe({
       next: (res: any) => {
@@ -163,4 +171,52 @@ export class CustomerKyc implements OnInit {
 
     return 'bg-warning text-dark';
   }
+  getNotifications(): void {
+  this.service1.getNotifications(this.userId).subscribe({
+    next: (res: any) => {
+
+      const allNotifications = res.data || res || [];
+
+      this.notifications = allNotifications.filter((notification: any) =>
+        notification.notificationType === 'KYC_DOCUMENT_APPROVED' ||
+        notification.notificationType === 'KYC_DOCUMENT_REJECTED'
+      );
+
+      this.updateUnreadCount();
+                  
+
+    },
+    error: (err: any) => {
+      console.error('Unable to load notifications', err);
+      this.notificationMessage = 'Unable to load notifications';
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+updateUnreadCount(): void {
+  this.unreadCount = this.notifications.filter(
+    notification => !notification.isRead
+  ).length;
+}
+
+markNotificationAsRead(notification: any): void {
+  if (notification.isRead) {
+    return;
+  }
+
+  this.service1.markAsRead(notification.notificationId).subscribe({
+    next: () => {
+      notification.isRead = true;
+      this.updateUnreadCount();
+      this.notificationMessage = 'Notification marked as read';
+    },
+    error: (err: any) => {
+      console.error('Unable to mark notification as read', err);
+      this.notificationMessage = 'Unable to mark notification as read';
+    }
+  });
+}
+
+
 }

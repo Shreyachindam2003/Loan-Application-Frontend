@@ -3,11 +3,12 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CibilScoreService } from '../../services/cibil-score-service';
 import { CustomerSidebar } from '../../../../core/theme/customer-sidebar/customer-sidebar';
 import { CommonModule } from '@angular/common';
+import { Header } from '../../../../core/theme/header/header';
 
 @Component({
   selector: 'app-cibil-score',
   standalone: true,
-  imports: [ReactiveFormsModule,CustomerSidebar,CommonModule],
+  imports: [ReactiveFormsModule,CustomerSidebar,CommonModule,Header],
   templateUrl: './cibil-score.html',
   styleUrl: './cibil-score.css'
 })
@@ -31,7 +32,7 @@ checkDate:any;
 cibilScore:any;
 status:any;
   checkScore(): void {
-this.service.getCibilScore(1).subscribe({
+this.service.getCibilScore(2).subscribe({
   next: (res: any) => {
 this.checkDate=res.data.CheckDate;
 this.cibilScore=res.data.CibilScore;

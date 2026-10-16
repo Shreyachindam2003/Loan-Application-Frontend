@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CustomerSidebar } from '../../../../core/theme/customer-sidebar/customer-sidebar';
 import { EligibiltyService } from '../../services/eligibilty-service';
+import { Header } from '../../../../core/theme/header/header';
 
 @Component({
-  imports: [CommonModule, CustomerSidebar],
+  imports: [CommonModule, CustomerSidebar,Header],
   selector: 'app-eligibility-check',
   styleUrl: './eligibility-check.css',
   templateUrl: './eligibility-check.html',

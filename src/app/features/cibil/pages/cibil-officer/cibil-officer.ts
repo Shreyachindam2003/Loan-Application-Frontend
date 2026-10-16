@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { CreditOfficerSidebar } from '../../../../core/theme/credit-officer-sidebar/credit-officer-sidebar';
 import { EligibiltyService } from '../../services/eligibilty-service';
+import { Header } from '../../../../core/theme/header/header';
 
 @Component({
   selector: 'app-cibil-officer',
@@ -12,7 +13,8 @@ import { EligibiltyService } from '../../services/eligibilty-service';
   imports: [
     CommonModule,
     FormsModule,
-    CreditOfficerSidebar
+    CreditOfficerSidebar,
+    Header
   ],
   templateUrl: './cibil-officer.html',
   styleUrl: './cibil-officer.css'

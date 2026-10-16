@@ -1,12 +1,23 @@
-.kyc-content {
-  min-width: 0;
-  width: 100%;
+.main-wrapper {
   margin-left: 220px;
+  width: calc(100% - 220px);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.kyc-content {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
-  .kyc-content {
+  .main-wrapper {
     margin-left: 0;
+    width: 100%;
+  }
+
+  .kyc-content {
     padding: 12px !important;
   }
 }
