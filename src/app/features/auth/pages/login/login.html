@@ -1,1 +1,77 @@
-<p>login works!</p>
+<div class="auth-page">
+  <section class="auth-card">
+    <div class="brand">
+      <div class="brand-icon"><i class="bi bi-bank2"></i></div>
+      <h1>LoanApp</h1>
+      <p>Smart loans. Simpler future.</p>
+    </div>
+
+    <div class="auth-heading">
+      <span class="eyebrow">{{ needsTwoFactor ? 'EXTRA SECURITY' : 'WELCOME BACK' }}</span>
+      <h2>{{ needsTwoFactor ? 'Verify your identity' : 'Sign in to your account' }}</h2>
+      <p>{{ needsTwoFactor ? 'Enter the code from your authenticator app.' : 'Use your registered account to continue.' }}</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-info" role="status">{{ successMessage }}</div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="mb-3" *ngIf="!needsTwoFactor">
+        <label class="form-label" for="email">Email address</label>
+        <div class="input-group auth-input">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input id="email" name="email" type="email" class="form-control" placeholder="you@example.com"
+            [(ngModel)]="email" autocomplete="username" required email />
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="!needsTwoFactor">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-group auth-input">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input id="password" name="password" type="password" class="form-control"
+            placeholder="Enter your password" [(ngModel)]="password" autocomplete="current-password" required />
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="needsTwoFactor">
+        <label class="form-label" for="twoFactorCode">Authenticator code</label>
+        <input id="twoFactorCode" name="twoFactorCode" type="text" class="form-control code-input"
+          placeholder="000000" [(ngModel)]="twoFactorCode" inputmode="numeric"
+          autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required />
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-submit w-100" [disabled]="loading || !loginForm.valid">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+        {{ loading ? 'Please wait...' : (needsTwoFactor ? 'Verify and Sign In' : 'Sign In') }}
+      </button>
+      <button *ngIf="needsTwoFactor" type="button" class="btn btn-link w-100 mt-2" (click)="backToLogin()">Back to login</button>
+    </form>
+
+    <div class="auth-divider"><span>OR</span></div>
+    <button type="button" class="btn btn-google w-100" (click)="loginWithGoogle()" [disabled]="loading">
+      <i class="bi bi-google me-2"></i> Continue with Google
+    </button>
+
+    <section *ngIf="googleVerification" class="google-verification mt-4">
+      <h3><i class="bi bi-shield-lock me-2"></i>Google 2FA verification</h3>
+      <p class="small text-secondary">Keep this page open. Complete Google sign-in in the popup. If the popup shows JSON, copy the account email from it, then enter the current authenticator code below.</p>
+      <form (ngSubmit)="verifyGoogleCode()" #googleForm="ngForm">
+        <label class="form-label" for="googleEmail">Google account email</label>
+        <input class="form-control mb-3" id="googleEmail" name="googleEmail" type="email"
+          [(ngModel)]="googleEmail" required email placeholder="google-account@example.com" />
+        <label class="form-label" for="googleCode">Authenticator code</label>
+        <input class="form-control code-input mb-3" id="googleCode" name="googleCode" type="text"
+          [(ngModel)]="googleCode" maxlength="6" pattern="[0-9]{6}" inputmode="numeric"
+          autocomplete="one-time-code" required placeholder="000000" />
+        <button class="btn btn-outline-primary w-100" type="submit" [disabled]="loading || !googleForm.valid">
+          {{ loading ? 'Verifying...' : 'Verify Google 2FA' }}
+        </button>
+      </form>
+      <button type="button" class="btn btn-link w-100 mt-2" (click)="googleVerification = false">Cancel Google sign-in</button>
+    </section>
+
+    <p class="auth-footer">Don't have an account? <a routerLink="/register">Create account</a></p>
+    <div class="security-note"><i class="bi bi-shield-check me-1"></i>Your account security matters to us.</div>
+  </section>
+</div>

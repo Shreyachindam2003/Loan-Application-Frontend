@@ -1,1 +1,100 @@
-<p>emi-schedule works!</p>
+
+<div class="emi-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">LOAN MANAGEMENT</p>
+      <h1>EMI Schedule</h1>
+      <p class="subtitle">Track your installments, due dates and payment status.</p>
+    </div>
+
+    <button class="refresh-btn" type="button"
+      (click)="loadSchedules()" [disabled]="loading">
+      {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </header>
+
+  <div *ngIf="loading" class="state-card">
+    <span class="spinner"></span>
+    <p>Loading your EMI schedule...</p>
+  </div>
+
+  <div *ngIf="!loading && errorMessage" class="error-card" role="alert">
+    <strong>Unable to load schedule</strong>
+    <p>{{ errorMessage }}</p>
+    <button type="button" (click)="loadSchedules()">Try again</button>
+  </div>
+
+  <ng-container *ngIf="!loading && !errorMessage">
+    <section class="summary-grid">
+      <article class="summary-card">
+        <span>Total scheduled EMI</span>
+        <h2>{{ totalEmiAmount | currency:'INR':'symbol':'1.2-2' }}</h2>
+      </article>
+
+      <article class="summary-card">
+        <span>Total installments</span>
+        <h2>{{ schedules.length }}</h2>
+      </article>
+
+      <article class="summary-card">
+        <span>Paid installments</span>
+        <h2>{{ paidCount }}</h2>
+      </article>
+
+      <article class="summary-card">
+        <span>Pending installments</span>
+        <h2>{{ pendingCount }}</h2>
+      </article>
+    </section>
+
+    <section class="schedule-card">
+      <div class="table-heading">
+        <div>
+          <h2>Installment details</h2>
+          <p>Installments returned for your loan accounts</p>
+        </div>
+      </div>
+
+      <div *ngIf="schedules.length === 0" class="empty-state">
+        <h3>No EMI schedule found</h3>
+        <p>Your loan currently has no installment records available.</p>
+      </div>
+
+      <div *ngIf="schedules.length > 0" class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Installment</th>
+              <th>Due date</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>EMI amount</th>
+              <th>Closing balance</th>
+              <th>Status</th>
+              <th>Paid date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of schedules; trackBy: trackByScheduleId">
+              <td>#{{ item.installmentNo }}</td>
+              <td>{{ item.dueDate | date:'dd MMM yyyy' }}</td>
+              <td>{{ item.principalAmount | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td>{{ item.interestAmount | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="emi-amount">
+                {{ item.emiAmount | currency:'INR':'symbol':'1.2-2' }}
+              </td>
+              <td>{{ item.closingBalance | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td>
+                <span class="status" [ngClass]="statusClass(item.status)">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td>{{ item.paidDate ? (item.paidDate | date:'dd MMM yyyy') : '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+</div>

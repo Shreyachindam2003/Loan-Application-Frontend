@@ -1,0 +1,307 @@
+
+<div class="closure-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">LOAN MANAGEMENT</span>
+      <h1>{{ isOfficer ? 'Closure Requests' : 'Loan Closure' }}</h1>
+      <p>
+        {{
+          isOfficer
+            ? 'Review closure request details and track payment status.'
+            : 'Create and track your full or partial loan closure request.'
+        }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="refresh()"
+      [disabled]="loadingRequests">
+      ↻ Refresh
+    </button>
+  </header>
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <div class="summary-icon purple">◷</div>
+      <div>
+        <span>Pending Requests</span>
+        <strong>{{ pendingCount }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon green">✓</div>
+      <div>
+        <span>Completed Requests</span>
+        <strong>{{ completedCount }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon blue">▤</div>
+      <div>
+        <span>Total Requests</span>
+        <strong>{{ requests.length }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel" *ngIf="!isOfficer">
+    <div class="panel-heading">
+      <div>
+        <h2>Create a Closure Request</h2>
+        <p>Choose the closure type and fill in the required details.</p>
+      </div>
+      <span class="step-label">STEP 01</span>
+    </div>
+
+    <div class="type-selector">
+      <button
+        type="button"
+        class="type-card"
+        [class.selected]="closureType === 'PARTIAL'"
+        [attr.aria-pressed]="closureType === 'PARTIAL'"
+        (click)="selectType('PARTIAL')">
+        <span class="type-icon">◐</span>
+        <span class="type-text">
+          <strong>Partial Closure</strong>
+          <small>Repay part of your outstanding principal.</small>
+        </span>
+        <span class="radio-dot"></span>
+      </button>
+
+      <button
+        type="button"
+        class="type-card"
+        [class.selected]="closureType === 'FULL'"
+        [attr.aria-pressed]="closureType === 'FULL'"
+        (click)="selectType('FULL')">
+        <span class="type-icon">✓</span>
+        <span class="type-text">
+          <strong>Full Closure</strong>
+          <small>Request settlement of the entire outstanding loan.</small>
+        </span>
+        <span class="radio-dot"></span>
+      </button>
+    </div>
+
+    <div class="info-message" *ngIf="closureType === 'FULL'">
+      The backend calculates the full closure amount from the outstanding
+      principal. Submitting this form does not make a payment or close the loan.
+    </div>
+
+    <form #closureForm="ngForm" (ngSubmit)="submitRequest()">
+      <div class="form-grid">
+        <div class="field">
+          <label for="loanAccountId">Loan Account ID <span>*</span></label>
+          <input
+            id="loanAccountId"
+            name="loanAccountId"
+            type="number"
+            min="1"
+            step="1"
+            [(ngModel)]="loanAccountId"
+            required
+            placeholder="Enter your loan account ID">
+        </div>
+
+        <ng-container *ngIf="closureType === 'PARTIAL'">
+          <div class="field">
+            <label for="partialAmount">Partial Amount (₹) <span>*</span></label>
+            <input
+              id="partialAmount"
+              name="partialAmount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              [(ngModel)]="partialAmount"
+              required
+              placeholder="e.g. 10000">
+            <small>Must be less than the outstanding principal.</small>
+          </div>
+
+          <div class="field">
+            <label for="partialTenureMonths">Revised Tenure (months) <span>*</span></label>
+            <input
+              id="partialTenureMonths"
+              name="partialTenureMonths"
+              type="number"
+              min="1"
+              step="1"
+              [(ngModel)]="partialTenureMonths"
+              required
+              placeholder="e.g. 12">
+          </div>
+        </ng-container>
+
+        <div class="field full-width">
+          <label for="reason">Reason <span>*</span></label>
+          <textarea
+            id="reason"
+            name="reason"
+            rows="3"
+            maxlength="500"
+            [(ngModel)]="reason"
+            required
+            placeholder="Explain why you want to close the loan"></textarea>
+          <small>{{ reason.length }}/500 characters</small>
+        </div>
+      </div>
+
+      <div class="feedback error" *ngIf="error" role="alert">
+        <strong>Request failed</strong>
+        <span>{{ error }}</span>
+      </div>
+
+      <div class="feedback success" *ngIf="success" role="status">
+        <strong>Information</strong>
+        <span>{{ success }}</span>
+      </div>
+
+      <footer class="form-footer">
+        <p>
+          A request is not a completed closure. Payment and backend verification
+          are separate steps.
+        </p>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="submitting || closureForm.invalid">
+          <span *ngIf="submitting" class="spinner"></span>
+          {{ submitting ? 'Submitting...' : 'Submit Request' }}
+        </button>
+      </footer>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>{{ isOfficer ? 'All Closure Requests' : 'My Closure Requests' }}</h2>
+        <p>Request amount, current status and payment state.</p>
+      </div>
+      <span class="record-count">{{ requests.length }} records</span>
+    </div>
+
+    <div class="loading-state" *ngIf="loadingRequests">
+      <span class="spinner dark"></span>
+      Loading requests...
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingRequests && requests.length === 0">
+      <div class="empty-symbol">▤</div>
+      <h3>No requests found</h3>
+      <p>Closure requests will appear here after they are submitted.</p>
+    </div>
+
+    <div class="table-container" *ngIf="!loadingRequests && requests.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Loan Account</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Remaining Principal</th>
+            <th>Revised EMI</th>
+            <th>Requested On</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th *ngIf="isOfficer">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of requests; trackBy: trackByRequestId">
+            <td class="request-number">#{{ item.requestId }}</td>
+            <td>{{ item.loanAccountId }}</td>
+
+            <td>
+              <span
+                class="type-badge"
+                [class.full]="item.foreClosureType === 'FULL'"
+                [class.partial]="item.foreClosureType === 'PARTIAL'">
+                {{ item.foreClosureType }}
+              </span>
+            </td>
+
+            <td class="money">
+              {{
+                formatCurrency(
+                  item.foreClosureType === 'FULL'
+                    ? item.foreClosureAmount
+                    : item.partialAmount
+                )
+              }}
+            </td>
+
+            <td>{{ formatCurrency(item.remainingPrincipal) }}</td>
+            <td>{{ formatCurrency(item.revisedEmiAmount) }}</td>
+            <td>{{ formatDate(item.requestedDate) }}</td>
+
+            <td>
+              <span
+                class="status-badge"
+                [class.pending]="item.status?.toUpperCase() === 'PENDING'"
+                [class.completed]="item.status?.toUpperCase() === 'COMPLETED'"
+                [class.rejected]="item.status?.toUpperCase() === 'REJECTED'">
+                {{ item.status || 'UNKNOWN' }}
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="payment-badge"
+                [class.paid]="item.isPaid"
+                [class.unpaid]="!item.isPaid">
+                {{ item.isPaid ? 'Paid' : 'Not paid' }}
+              </span>
+            </td>
+
+            <td *ngIf="isOfficer">
+              <div class="closure-actions">
+                <button
+                  type="button"
+                  class="btn btn-approve"
+                  [disabled]="
+                    item.status?.toUpperCase() !== 'PENDING' ||
+                    selectedActionRequestId !== null
+                  "
+                  (click)="approveRequest(item)">
+                  {{
+                    selectedActionRequestId === item.requestId
+                      ? 'Processing...'
+                      : 'Approve'
+                  }}
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-reject"
+                  [disabled]="
+                    item.status?.toUpperCase() !== 'PENDING' ||
+                    selectedActionRequestId !== null
+                  "
+                  (click)="rejectRequest(item)">
+                  {{
+                    selectedActionRequestId === item.requestId
+                      ? 'Processing...'
+                      : 'Reject'
+                  }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer" *ngIf="!loadingRequests && requests.length > 0">
+      <span>Showing {{ requests.length }} records</span>
+      <span>Refresh to retrieve the latest backend data.</span>
+    </div>
+  </section>
+</div>
