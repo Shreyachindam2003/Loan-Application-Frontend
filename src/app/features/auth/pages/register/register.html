@@ -1,1 +1,120 @@
-<p>register works!</p>
+<div class="register-page">
+  <div class="register-card">
+    <div class="register-brand">
+      <div class="brand-icon"><i class="bi bi-bank2"></i></div>
+      <h1>Create your LoanApp account</h1>
+      <p>Enter your details to get started.</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="firstName">First name</label>
+          <input class="form-control" id="firstName" name="firstName"
+            [(ngModel)]="firstName" required maxlength="60"
+            placeholder="First name" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="lastName">Last name</label>
+          <input class="form-control" id="lastName" name="lastName"
+            [(ngModel)]="lastName" required maxlength="60"
+            placeholder="Last name" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label" for="age">Age</label>
+          <input class="form-control" id="age" name="age" type="number"
+            [(ngModel)]="age" required min="18" max="100"
+            placeholder="Age" />
+        </div>
+
+        <div class="col-md-8">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-control" id="email" name="email" type="email"
+            [(ngModel)]="email" required email autocomplete="email"
+            placeholder="you@example.com" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" name="password"
+            type="password" [(ngModel)]="password" required minlength="8"
+            autocomplete="new-password" placeholder="Minimum 8 characters" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="confirmPassword">Confirm password</label>
+          <input class="form-control" id="confirmPassword"
+            name="confirmPassword" type="password"
+            [(ngModel)]="confirmPassword" required
+            autocomplete="new-password" placeholder="Re-enter password" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="mobileNumber">Mobile number</label>
+          <input class="form-control" id="mobileNumber" name="mobileNumber"
+            type="tel" [(ngModel)]="mobileNumber" required maxlength="10"
+            inputmode="numeric" placeholder="10-digit mobile number" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="employmentType">Employment type</label>
+          <select class="form-select" id="employmentType" name="employmentType"
+            [(ngModel)]="employmentType" required>
+            <option value="" disabled>Select employment type</option>
+            <option value="Private">Private</option>
+            <option value="Government">Government</option>
+            <option value="Self-employed">Self-employed</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="panNo">PAN number</label>
+          <input class="form-control text-uppercase" id="panNo" name="panNo"
+            [(ngModel)]="panNo" required maxlength="10"
+            placeholder="ABCDE1234F" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="aadhaarNo">Aadhaar number</label>
+          <input class="form-control" id="aadhaarNo" name="aadhaarNo"
+            [(ngModel)]="aadhaarNo" required maxlength="12"
+            inputmode="numeric" placeholder="12-digit Aadhaar number" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="salary">Monthly salary (₹)</label>
+          <input class="form-control" id="salary" name="salary" type="number"
+            [(ngModel)]="salary" required min="0" placeholder="Monthly salary" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="monthlyInvestment">
+            Monthly investment (₹)
+          </label>
+          <input class="form-control" id="monthlyInvestment"
+            name="monthlyInvestment" type="number"
+            [(ngModel)]="monthlyInvestment" required min="0"
+            placeholder="Monthly investment" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 register-submit"
+        [disabled]="loading || !registerForm.valid">
+        <span *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2"></span>
+        {{ loading ? 'Creating account...' : 'Create account' }}
+      </button>
+    </form>
+
+    <p class="register-footer">
+      Already have an account?
+      <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>

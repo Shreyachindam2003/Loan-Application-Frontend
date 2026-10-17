@@ -1,1 +1,76 @@
-<p>otp works!</p>
+
+<div class="otp-page">
+  <div class="otp-card">
+    <div class="otp-icon">
+      <i class="bi bi-envelope-check"></i>
+    </div>
+
+    <span class="eyebrow">EMAIL VERIFICATION</span>
+    <h1>Verify your email</h1>
+    <p class="otp-description">
+      Enter the 6-digit verification code sent to your registered email.
+    </p>
+
+    <div *ngIf="!email" class="alert alert-warning">
+      No pending verification email was found.
+      <a routerLink="/register">Register again</a>.
+    </div>
+
+    <div *ngIf="email" class="email-label">
+      <i class="bi bi-envelope me-2"></i>{{ email }}
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="verifyOtp()" #otpForm="ngForm">
+      <label for="otp" class="form-label">Verification code</label>
+      <input
+        id="otp"
+        name="otp"
+        class="form-control otp-input"
+        type="text"
+        [(ngModel)]="otp"
+        required
+        minlength="6"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        placeholder="000000"
+      />
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 otp-submit"
+        [disabled]="loading || !otpForm.valid || !email"
+      >
+        <span *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2"></span>
+        {{ loading ? 'Verifying...' : 'Verify email' }}
+      </button>
+    </form>
+
+    <button
+      type="button"
+      class="btn btn-outline-primary w-100 resend-button"
+      (click)="resendOtp()"
+      [disabled]="resending || !email"
+    >
+      <span *ngIf="resending"
+        class="spinner-border spinner-border-sm me-2"></span>
+      {{ resending ? 'Requesting...' : 'Resend OTP' }}
+    </button>
+
+    <p class="otp-footer">
+      <a routerLink="/login">
+        <i class="bi bi-arrow-left me-1"></i> Back to sign in
+      </a>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.otp-page {
+  min-height: 100vh;
+  padding: 28px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 10% 10%, #dbeafe 0, transparent 32%),
+    radial-gradient(circle at 90% 90%, #d1fae5 0, transparent 30%),
+    #f4f7fb;
+}
+
+.otp-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 38px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e8edf4;
+  border-radius: 22px;
+  box-shadow: 0 22px 65px rgba(27, 48, 79, 0.12);
+}
+
+.otp-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  border-radius: 19px;
+  background: #eaf1ff;
+  color: #2459c4;
+  font-size: 30px;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #2459c4;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.otp-card h1 {
+  margin: 0 0 12px;
+  color: #172b4d;
+  font-size: 27px;
+  font-weight: 750;
+}
+
+.otp-description {
+  margin-bottom: 22px;
+  color: #758196;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.email-label {
+  margin-bottom: 22px;
+  padding: 12px;
+  border: 1px solid #e5eaf2;
+  border-radius: 10px;
+  background: #f8faff;
+  color: #354660;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.form-label {
+  display: block;
+  text-align: left;
+  color: #27364b;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.otp-input {
+  min-height: 54px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 9px;
+  border-color: #dce4ef;
+  box-shadow: none;
+}
+
+.otp-input:focus {
+  border-color: #4e7de0;
+  box-shadow: 0 0 0 3px rgba(55, 105, 210, 0.1);
+}
+
+.otp-submit {
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: #2459c4;
+  font-weight: 650;
+}
+
+.resend-button {
+  min-height: 46px;
+  margin-top: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.otp-footer {
+  margin: 24px 0 0;
+  font-size: 13px;
+}
+
+.otp-footer a {
+  color: #2459c4;
+  text-decoration: none;
+  font-weight: 650;
+}
+
+@media (max-width: 480px) {
+  .otp-card {
+    padding: 27px 20px;
+  }
+}

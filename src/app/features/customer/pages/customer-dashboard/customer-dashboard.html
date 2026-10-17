@@ -1,11 +1,124 @@
 
 <div class="dashboard-layout">
-
   <app-customer-sidebar></app-customer-sidebar>
 
   <main class="dashboard-content">
-    <h2>Customer Dashboard</h2>
-    <p>Welcome to your Loan Management Dashboard.</p>
-  </main>
+    <header class="dashboard-header">
+      <div>
+        <span class="eyebrow">Customer workspace</span>
+        <h1>Welcome to LoanApp</h1>
+        <p>Manage your loans, repayments and closure requests.</p>
+      </div>
 
+      <a class="signout-button" routerLink="/logout">
+        <i class="bi bi-box-arrow-right"></i>
+        Sign out
+      </a>
+    </header>
+
+    <section class="dashboard-grid">
+      <a class="dashboard-tile" routerLink="/loan">
+        <span class="tile-icon"><i class="bi bi-bank"></i></span>
+        <h2>My Loans</h2>
+        <p>View your loan information and account details.</p>
+        <span class="tile-action">Open loans <i class="bi bi-arrow-right"></i></span>
+      </a>
+
+      <a class="dashboard-tile" routerLink="/emi/schedule">
+        <span class="tile-icon"><i class="bi bi-calendar2-check"></i></span>
+        <h2>EMI Schedule</h2>
+        <p>Review scheduled installments and due dates.</p>
+        <span class="tile-action">View schedule <i class="bi bi-arrow-right"></i></span>
+      </a>
+
+      <a class="dashboard-tile" routerLink="/emi/payment">
+        <span class="tile-icon"><i class="bi bi-credit-card"></i></span>
+        <h2>Make Payment</h2>
+        <p>Continue to your available EMI payment flow.</p>
+        <span class="tile-action">Make payment <i class="bi bi-arrow-right"></i></span>
+      </a>
+
+      <a class="dashboard-tile" routerLink="/emi/history">
+        <span class="tile-icon"><i class="bi bi-clock-history"></i></span>
+        <h2>Payment History</h2>
+        <p>Review recorded payment history.</p>
+        <span class="tile-action">View history <i class="bi bi-arrow-right"></i></span>
+      </a>
+
+      <a class="dashboard-tile" routerLink="/customer/closure">
+        <span class="tile-icon"><i class="bi bi-file-earmark-check"></i></span>
+        <h2>Full / Partial Closure</h2>
+        <p>Submit a request to close or partially prepay a loan.</p>
+        <span class="tile-action">Manage closure <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </section>
+
+    <section class="notification-card">
+      <header class="notification-header">
+        <div>
+          <h2>Notifications</h2>
+          <p>Updates about your loan closure requests.</p>
+        </div>
+
+        <button
+          type="button"
+          class="refresh-button"
+          (click)="loadNotifications()"
+          [disabled]="loadingNotifications"
+        >
+          <i class="bi bi-arrow-clockwise"></i>
+          {{ loadingNotifications ? 'Refreshing...' : 'Refresh' }}
+        </button>
+      </header>
+
+      <div class="notification-body">
+        <div *ngIf="loadingNotifications" class="notification-message">
+          <span class="spinner"></span>
+          Loading notifications...
+        </div>
+
+        <div
+          *ngIf="!loadingNotifications && notificationError"
+          class="notification-error"
+          role="alert"
+        >
+          {{ notificationError }}
+          <button type="button" (click)="loadNotifications()">
+            Try again
+          </button>
+        </div>
+
+        <div
+          *ngIf="
+            !loadingNotifications &&
+            !notificationError &&
+            notifications.length === 0
+          "
+          class="notification-message"
+        >
+          You don't have any notifications yet.
+        </div>
+
+        <article
+          *ngFor="let notification of notifications"
+          class="notification-item"
+        >
+          <div class="notification-item-header">
+            <h3>
+              <i class="bi bi-bell"></i>
+              {{ notification.title }}
+            </h3>
+
+            <span *ngIf="!notification.read" class="new-badge">New</span>
+          </div>
+
+          <p>{{ notification.message }}</p>
+
+          <time *ngIf="notification.createdAt">
+            {{ notification.createdAt | date:'medium' }}
+          </time>
+        </article>
+      </div>
+    </section>
+  </main>
 </div>

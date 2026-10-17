@@ -1,1 +1,168 @@
-<p>loan-list works!</p>
+<div class="loans-page">
+
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">CUSTOMER PORTAL</div>
+      <h1>My Loans</h1>
+      <p class="subtitle">View your loan accounts and repayment summary.</p>
+    </div>
+
+    <button class="refresh-button"
+            type="button"
+            (click)="loadLoans()"
+            [disabled]="loading">
+      <span>{{ loading ? 'Loading...' : '↻ Refresh' }}</span>
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="state-card">
+      <div class="spinner"></div>
+      <h3>Loading your loans</h3>
+      <p>Please wait while we retrieve your loan accounts.</p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="state-card error-state">
+      <div class="state-icon">!</div>
+      <h3>Unable to load loans</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="primary-button" type="button" (click)="loadLoans()">
+        Try Again
+      </button>
+    </div>
+  } @else {
+
+    <div class="summary-grid">
+
+      <div class="summary-card">
+        <div class="summary-top">
+          <span class="summary-label">Total Loan Amount</span>
+          <span class="summary-icon blue-icon">₹</span>
+        </div>
+        <div class="summary-value">
+          {{ totalLoanAmount | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+        </div>
+        <div class="summary-note">Across {{ loans.length }} loan account(s)</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-top">
+          <span class="summary-label">Outstanding Principal</span>
+          <span class="summary-icon orange-icon">↗</span>
+        </div>
+        <div class="summary-value">
+          {{ totalOutstanding | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+        </div>
+        <div class="summary-note">Remaining principal balance</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-top">
+          <span class="summary-label">Total Amount Paid</span>
+          <span class="summary-icon green-icon">✓</span>
+        </div>
+        <div class="summary-value">
+          {{ totalPaid | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+        </div>
+        <div class="summary-note">Payments recorded against loans</div>
+      </div>
+
+    </div>
+
+    <div class="section-header">
+      <div>
+        <h2>Your Loan Accounts</h2>
+        <p>Loan details retrieved from your account.</p>
+      </div>
+      <span class="count-badge">{{ loans.length }} account(s)</span>
+    </div>
+
+    @if (loans.length === 0) {
+      <div class="state-card empty-state">
+        <div class="state-icon">⌂</div>
+        <h3>No loan accounts found</h3>
+        <p>
+          No loan accounts are currently linked to your customer profile.
+          Once a loan account is created for you, it will appear here.
+        </p>
+      </div>
+    } @else {
+
+      <div class="loan-list">
+
+        @for (loan of loans; track loan.loanAccountId) {
+          <article class="loan-card">
+
+            <div class="loan-card-header">
+              <div class="loan-heading">
+                <div class="loan-symbol">₹</div>
+                <div>
+                  <h3>Loan Account</h3>
+                  <p class="account-number">
+                    {{ loan.loanAccountNo || ('Account #' + loan.loanAccountId) }}
+                  </p>
+                </div>
+              </div>
+
+              <span class="status-badge" [ngClass]="getStatusClass(loan.loanStatus)">
+                {{ loan.loanStatus || 'UNKNOWN' }}
+              </span>
+            </div>
+
+            <div class="loan-amount">
+              <span>Original Loan Amount</span>
+              <strong>
+                {{ loan.loanAmount | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+              </strong>
+            </div>
+
+            <div class="details-grid">
+
+              <div class="detail-item">
+                <span>Outstanding Principal</span>
+                <strong>
+                  {{ loan.outstandingPrincipal | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+                </strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Monthly EMI</span>
+                <strong>
+                  {{ loan.emiAmount | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+                </strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Interest Rate</span>
+                <strong>{{ loan.interestRate }}%</strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Loan Tenure</span>
+                <strong>{{ loan.tenureMonths }} months</strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Amount Paid</span>
+                <strong>
+                  {{ loan.totalPaidAmount | currency:'INR':'symbol':'1.0-2':'en-IN' }}
+                </strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Disbursement Date</span>
+                <strong>
+                  {{ loan.disbursementDate ? (loan.disbursementDate | date:'dd MMM yyyy') : 'Not available' }}
+                </strong>
+              </div>
+
+            </div>
+
+          </article>
+        }
+
+      </div>
+    }
+  }
+
+</div>
