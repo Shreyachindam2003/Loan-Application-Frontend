@@ -6,8 +6,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class EmiPayment {
-  private scheduleUrl =
-    'http://localhost:8080/api/v1/emi-schedules';
+  private scheduleUrl ='http://localhost:8080/api/v1/emi-schedules';
 
   private paymentUrl = 'http://localhost:8080/api/v1/payments';
 
@@ -56,7 +55,7 @@ verifyPayment(request: {
 getInvoice(paymentId: number) {
   return this.http.get(
     `${this.paymentUrl}/${paymentId}/invoice`,
-    { responseType: 'blob' }
+    // { responseType: 'blob' }
   );
 }
 }

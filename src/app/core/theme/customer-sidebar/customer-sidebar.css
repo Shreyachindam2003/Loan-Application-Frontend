@@ -3,13 +3,41 @@
   display: block;
   width: 220px;
   min-width: 220px;
-  min-height: 100vh;
+  height: 100vh;
+  flex-shrink: 0;
 }
 
+/* Sidebar fixed rahega aur poori screen height cover karega */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh;
   min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+
   background: linear-gradient(180deg, #0875f9, #06418f);
   color: white;
+
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
+}
+
+/* Chrome/Edge scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 10px;
 }
 
 .sidebar-brand {
@@ -33,6 +61,8 @@
   color: white;
   text-decoration: none;
   font-size: 14px;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .menu-link:hover {
@@ -44,14 +74,6 @@
   min-width: 16px;
 }
 
-@media (max-width: 768px) {
-  :host {
-    width: 190px;
-    min-width: 190px;
-  }
-}
-
-/* Payments submenu */
 .submenu {
   display: flex;
   flex-direction: column;
@@ -67,24 +89,23 @@
   color: #ffffff;
   text-decoration: none;
   font-size: 13px;
+  box-sizing: border-box;
   transition: background-color 0.2s ease;
 }
 
-.submenu-link:hover {
-  background-color: #0d6efd;
-  color: #ffffff;
-}
-
+.submenu-link:hover,
 .submenu-link.active {
   background-color: #0d6efd;
   color: #ffffff;
 }
 
-.menu-link {
-  cursor: pointer;
-}
+@media (max-width: 768px) {
+  :host {
+    width: 190px;
+    min-width: 190px;
+  }
 
-.menu-link,
-.submenu-link {
-  box-sizing: border-box;
+  .sidebar {
+    width: 190px;
+  }
 }
