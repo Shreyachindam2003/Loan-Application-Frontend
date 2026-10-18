@@ -1,0 +1,231 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div><strong>LoanSphere</strong><small>Loan management platform</small></div>
+    </div>
+    <div class="workspace-switch">
+      <button [class.active]="workspace === 'customer'" (click)="switchWorkspace('customer')">Customer</button>
+      <button [class.active]="workspace === 'officer'" (click)="switchWorkspace('officer')">Officer</button>
+    </div>
+    <div class="nav-caption">NAVIGATION</div>
+    <nav>
+      @for (item of navItems; track item.key) {
+        <div class="nav-group">{{ item.group }}</div>
+        <button class="nav-item" [class.selected]="page === item.key" (click)="navigate(item.key)">
+          <span class="nav-icon">{{ item.icon }}</span><span>{{ item.label }}</span>
+          @if (item.key === 'kyc-review' && pendingKycCount > 0) { <span class="nav-count">{{ pendingKycCount }}</span> }
+          @if (item.key === 'loan-review' && pendingLoanCount > 0) { <span class="nav-count">{{ pendingLoanCount }}</span> }
+        </button>
+      }
+    </nav>
+    <div class="sidebar-bottom">
+      <span class="status-dot"></span><span>API workspace</span>
+      <small>Local development</small>
+    </div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">LOAN OPERATIONS / {{ workspace === 'customer' ? 'CUSTOMER PORTAL' : 'OFFICER DESK' }}</div>
+        <h1>{{ pageTitle }}</h1>
+      </div>
+      <div class="identity-controls">
+        <label>
+          <span>Customer ID</span>
+          <input type="number" min="1" placeholder="e.g. 101" [(ngModel)]="customerId">
+        </label>
+        @if (workspace === 'officer') {
+          <label>
+            <span>Officer ID</span>
+            <input type="number" min="1" placeholder="Officer ID" [(ngModel)]="officerId">
+          </label>
+        }
+        <button class="icon-button" title="Refresh current page" (click)="navigate(page)">↻</button>
+      </div>
+    </header>
+
+    @if (message) { <div class="notice success"><span>✓</span>{{ message }}<button (click)="message = ''">×</button></div> }
+    @if (error) { <div class="notice danger"><span>!</span>{{ error }}<button (click)="error = ''">×</button></div> }
+
+    @if (page === 'overview') {
+      <section class="welcome-panel">
+        <div class="welcome-copy">
+          <span class="pill">SMART LOAN WORKSPACE</span>
+          <h2>{{ workspace === 'customer' ? 'Your next chapter starts here.' : 'Move every application forward.' }}</h2>
+          <p>{{ workspace === 'customer' ? 'Upload documents, check eligibility and follow your loan journey in one place.' : 'Review documents, make eligibility decisions and process loan applications.' }}</p>
+          <button class="primary-button" (click)="navigate(workspace === 'customer' ? 'kyc' : 'kyc-review')">{{ workspace === 'customer' ? 'Complete KYC' : 'Review pending KYC' }} <span>→</span></button>
+        </div>
+        <div class="welcome-art"><div class="art-circle"></div><div class="art-card"><span>LOAN JOURNEY</span><strong>Simple. Clear. Secure.</strong><div class="art-progress"><i></i><i></i><i></i><i></i></div><small>Track every milestone</small></div><div class="art-orbit">₹</div></div>
+      </section>
+
+      @if (workspace === 'customer') {
+        <div class="section-heading"><div><h2>Your loan at a glance</h2><p>Summary for customer ID {{ customerId || 'not entered' }}</p></div><button class="text-button" (click)="navigate('applications')">View applications →</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">▣</span><span class="stat-label">Latest application</span></div><strong>{{ applications[0] ? '#' + applications[0].dealId : '—' }}</strong><small>{{ applications[0] ? pretty(applications[0].status) : 'No application loaded' }}</small></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon violet">◈</span><span class="stat-label">Eligible amount</span></div><strong>{{ scorecard ? money(scorecard.eligibleLoanAmount) : '—' }}</strong><small>{{ scorecard ? 'Scorecard available' : 'Generate a scorecard' }}</small></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon green">▤</span><span class="stat-label">KYC documents</span></div><strong>{{ documents.length }}</strong><small>Uploaded documents</small></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon amber">♧</span><span class="stat-label">Notifications</span></div><strong>{{ notifications.length }}</strong><small>Open notifications to refresh</small></article>
+        </div>
+      } @else {
+        <div class="section-heading"><div><h2>Operations overview</h2><p>Pending work from the live backend</p></div><button class="text-button" (click)="navigate('loan-review')">Open loan processing →</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">▤</span><span class="stat-label">KYC pending</span></div><strong>{{ pendingKyc.length }}</strong><small>Documents awaiting review</small></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon violet">▣</span><span class="stat-label">Loan applications</span></div><strong>{{ pendingDeals.length }}</strong><small>Applications awaiting review</small></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon amber">◈</span><span class="stat-label">Eligibility reviews</span></div><strong>{{ eligibilityReviews.length }}</strong><small>Pending eligibility decisions</small></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon green">✓</span><span class="stat-label">Backend connection</span></div><strong>Live API</strong><small>localhost:8080</small></article>
+        </div>
+      }
+      <div class="section-heading"><div><h2>Quick actions</h2><p>Jump straight to the next step</p></div></div>
+      <div class="quick-grid">
+        @if (workspace === 'customer') {
+          <button class="quick-card" (click)="navigate('kyc')"><span class="quick-icon blue">▤</span><span><strong>Upload KYC</strong><small>Identity and income documents</small></span><b>↗</b></button>
+          <button class="quick-card" (click)="navigate('cibil')"><span class="quick-icon violet">◈</span><span><strong>Check eligibility</strong><small>Review CIBIL and eligibility data</small></span><b>↗</b></button>
+          <button class="quick-card" (click)="navigate('apply')"><span class="quick-icon green">＋</span><span><strong>Apply for a loan</strong><small>Submit a loan request</small></span><b>↗</b></button>
+          <button class="quick-card" (click)="navigate('sanction')"><span class="quick-icon amber">▧</span><span><strong>Sanction letter</strong><small>View or download your PDF</small></span><b>↗</b></button>
+        } @else {
+          <button class="quick-card" (click)="navigate('kyc-review')"><span class="quick-icon blue">▤</span><span><strong>Review KYC</strong><small>Approve or reject documents</small></span><b>↗</b></button>
+          <button class="quick-card" (click)="navigate('eligibility-review')"><span class="quick-icon violet">◈</span><span><strong>Eligibility queue</strong><small>Make eligibility decisions</small></span><b>↗</b></button>
+          <button class="quick-card" (click)="navigate('loan-review')"><span class="quick-icon green">▣</span><span><strong>Loan processing</strong><small>Review and disburse</small></span><b>↗</b></button>
+        }
+      </div>
+      <div class="api-note"><strong>Integration note</strong><span>This backend ZIP does not expose authentication/Google OAuth/2FA, support-ticket or closure endpoints. Those workflows are not simulated here.</span></div>
+    }
+
+    @if (page === 'kyc') {
+      <section class="content-card">
+        <div class="card-heading"><div><span class="kicker">CUSTOMER DOCUMENTS</span><h2>KYC documents</h2><p>Upload a PDF or image. The backend stores and tracks its verification status.</p></div><span class="count-chip">{{ documents.length }} uploaded</span></div>
+        <div class="upload-panel">
+          <div class="upload-form">
+            <label class="field"><span>Customer ID</span><input type="number" [(ngModel)]="customerId" min="1" placeholder="Enter customer ID"></label>
+            <label class="field"><span>Document type</span><select [(ngModel)]="documentType"><option value="AADHAAR">Aadhaar</option><option value="PAN">PAN card</option><option value="SALARY_SLIP">Salary slip</option><option value="BANK_STATEMENT">Bank statement</option><option value="ADDRESS_PROOF">Address proof</option><option value="OTHER">Other</option></select></label>
+            <label class="file-drop"><input type="file" accept=".pdf,image/png,image/jpeg,image/webp" (change)="onFileChange($event)"><span class="file-symbol">↑</span><strong>{{ selectedFile ? selectedFile.name : 'Choose a document' }}</strong><small>PDF, JPG, PNG or WEBP</small></label>
+            <button class="primary-button" [disabled]="busy" (click)="uploadKyc()">{{ busy ? 'Uploading…' : 'Upload document' }} <span>→</span></button>
+          </div>
+          <div class="upload-side"><div class="shield-icon">✓</div><h3>Keep your documents ready</h3><p>Use clear, readable files. After submission, an officer can review each document and record an approval or rejection.</p><div class="secure-line"> <span>●</span> Upload goes directly to your configured backend</div></div>
+        </div>
+      </section>
+      <section class="content-card">
+        <div class="card-heading"><div><h2>Uploaded documents</h2><p>Latest status returned by the KYC API.</p></div><button class="secondary-button" (click)="loadKyc()">Refresh list</button></div>
+        @if (documents.length === 0) { <div class="empty-state"><span>▤</span><strong>No documents to show</strong><p>Enter a valid customer ID and upload your first document.</p></div> }
+        @else {
+          <div class="table-wrap"><table><thead><tr><th>Document</th><th>Document ID</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+            @for (doc of documents; track doc.documentId) {
+              <tr><td><div class="doc-cell"><span class="file-mini">▧</span><span><strong>{{ pretty(doc.documentType) }}</strong><small>Customer #{{ doc.customerId }}</small></span></div></td><td>#{{ doc.documentId }}</td><td><span class="status-chip" [class]="doc.verificationStatus.toLowerCase()">{{ pretty(doc.verificationStatus) }}</span></td><td><div class="row-actions"><button class="link-button" (click)="viewKyc(doc)">View</button><button class="link-button danger-text" (click)="deleteKyc(doc)">Delete</button></div></td></tr>
+            }
+          </tbody></table></div>
+        }
+      </section>
+    }
+
+    @if (page === 'cibil') {
+      <section class="content-card">
+        <div class="card-heading"><div><span class="kicker">CREDIT PROFILE</span><h2>CIBIL & eligibility</h2><p>Use the CIBIL endpoints configured in the backend to refresh the credit profile.</p></div><button class="primary-button" (click)="calculateCibil()" [disabled]="busy">Calculate CIBIL <span>→</span></button></div>
+        <div class="data-grid">
+          <article class="data-tile"><span>Customer profile</span><strong>{{ cibilDetails ? pretty(cibilDetails['FullName'] || cibilDetails['fullName']) : 'Not loaded' }}</strong><small>PAN: {{ cibilDetails ? (cibilDetails['PanNumber'] || cibilDetails['panNumber'] || '—') : '—' }}</small></article>
+          <article class="data-tile"><span>CIBIL score</span><strong>{{ cibilResult ? (cibilResult['CibilScore'] || cibilResult['cibilScore'] || cibilResult['Score'] || 'Calculated') : '—' }}</strong><small>{{ cibilResult ? pretty(cibilResult['Status'] || cibilResult['status']) : 'Calculate to refresh score' }}</small></article>
+          <article class="data-tile"><span>Eligibility status</span><strong>{{ eligibility ? pretty(eligibility['status'] || eligibility['reviewStatus']) : 'Not loaded' }}</strong><small>{{ eligibility ? money(eligibility['loanAmount'] || eligibility['eligibleLoanAmount']) : 'Eligibility amount' }}</small></article>
+        </div>
+        <div class="section-heading compact"><div><h2>Eligibility response</h2><p>Exact data returned by the backend.</p></div><button class="secondary-button" (click)="loadEligibility()">Refresh eligibility</button></div>
+        @if (eligibility) { <div class="detail-list">@for (entry of entries(eligibility); track entry[0]) { <div><span>{{ pretty(entry[0]) }}</span><strong>{{ pretty(entry[1]) }}</strong></div> }</div> }
+        @else { <div class="empty-state"><span>◈</span><strong>No eligibility result loaded</strong><p>Enter a valid customer ID and refresh the data.</p></div> }
+      </section>
+    }
+
+    @if (page === 'scorecard') {
+      <section class="content-card">
+        <div class="card-heading"><div><span class="kicker">CREDIT ASSESSMENT</span><h2>Loan scorecard</h2><p>Generate or load the latest scorecard for this customer.</p></div><button class="primary-button" (click)="generateScorecard()" [disabled]="busy">Generate scorecard <span>→</span></button></div>
+        @if (scorecard) {
+          <div class="score-hero"><div><span class="kicker">SCORECARD #{{ scorecard.scoreCardId }}</span><h2>{{ money(scorecard.eligibleLoanAmount) }}</h2><p>Eligible loan amount</p></div><div class="score-circle"><strong>{{ scorecard.cibilScore }}</strong><span>CIBIL SCORE</span></div></div>
+          <div class="data-grid three"><article class="data-tile"><span>Risk category</span><strong>{{ pretty(scorecard.riskCategory) }}</strong></article><article class="data-tile"><span>Status</span><strong>{{ pretty(scorecard.status) }}</strong></article><article class="data-tile"><span>Generated</span><strong>{{ scorecard.generatedAt | date:'mediumDate' }}</strong></article></div>
+          <button class="primary-button margin-top" (click)="navigate('apply')">Continue to loan application <span>→</span></button>
+        } @else { <div class="empty-state"><span>▦</span><strong>No scorecard available</strong><p>Generate a scorecard to continue, if the backend rules allow it.</p><button class="primary-button" (click)="generateScorecard()">Generate scorecard</button></div> }
+      </section>
+    }
+
+    @if (page === 'apply') {
+      <section class="content-card">
+        <div class="card-heading"><div><span class="kicker">NEW APPLICATION</span><h2>Apply for a loan</h2><p>Fields below match the backend LoanApplyRequest validation.</p></div><span class="count-chip">{{ scorecard ? 'Scorecard #' + scorecard.scoreCardId : 'Scorecard required' }}</span></div>
+        <div class="form-grid">
+          <label class="field"><span>Loan type</span><select [(ngModel)]="loanType"><option value="HOME">Home loan</option><option value="CAR">Car / vehicle loan</option></select></label>
+          <label class="field"><span>Requested amount (₹)</span><input type="number" min="1" [(ngModel)]="loanAmount"></label>
+          <label class="field"><span>Tenure (months, 1–360)</span><input type="number" min="1" max="360" [(ngModel)]="tenureMonths"></label>
+          <label class="field"><span>Requested disbursement date</span><input type="date" [(ngModel)]="disbursementDate" [min]="''"></label>
+          <label class="field"><span>EMI debit day (1–28)</span><input type="number" min="1" max="28" [(ngModel)]="emiDay"></label>
+          <label class="field"><span>Bank name</span><input type="text" maxlength="200" [(ngModel)]="bankName" placeholder="Bank name"></label>
+          <label class="field"><span>Bank account number</span><input type="text" inputmode="numeric" [(ngModel)]="bankAccountNumber" placeholder="6–50 digits"></label>
+          <label class="field"><span>IFSC code</span><input type="text" maxlength="11" [(ngModel)]="ifscCode" placeholder="ABCD0123456" (ngModelChange)="ifscCode = $event.toUpperCase()"></label>
+          <label class="field full"><span>Property address (if applicable)</span><textarea rows="2" maxlength="1000" [(ngModel)]="propertyAddress" placeholder="Address / property details"></textarea></label>
+        </div>
+        <div class="form-footer"><span>Loan application is sent to the backend for officer review.</span><button class="primary-button" (click)="applyForLoan()" [disabled]="busy || !scorecard">Submit application <span>→</span></button></div>
+      </section>
+    }
+
+    @if (page === 'applications') {
+      <section class="content-card">
+        <div class="card-heading"><div><span class="kicker">APPLICATION TRACKER</span><h2>My applications</h2><p>Check current status and application details.</p></div><button class="secondary-button" (click)="loadApplications()">Refresh</button></div>
+        @if (applications.length === 0) { <div class="empty-state"><span>▣</span><strong>No applications found</strong><p>Check customer ID or submit a new loan application.</p><button class="primary-button" (click)="navigate('apply')">Apply for loan</button></div> }
+        @else {
+          <div class="application-cards">
+            @for (deal of applications; track deal.dealId) {
+              <article class="application-card"><div class="application-top"><div><span class="kicker">APPLICATION #{{ deal.dealId }}</span><h3>{{ pretty(deal.loanType) }}</h3></div><span class="status-chip" [class]="deal.status.toLowerCase()">{{ pretty(deal.status) }}</span></div>
+                <div class="application-values"><div><span>Requested amount</span><strong>{{ money(deal.loanAmount) }}</strong></div><div><span>Eligible amount</span><strong>{{ money(deal.eligibleLoanAmount) }}</strong></div><div><span>Monthly EMI</span><strong>{{ money(deal.emiAmount) }}</strong></div><div><span>Interest rate</span><strong>{{ deal.annualInterestRate }}%</strong></div><div><span>Tenure</span><strong>{{ deal.tenureMonths }} months</strong></div><div><span>Requested date</span><strong>{{ deal.requestedDisbursementDate | date:'mediumDate' }}</strong></div></div>
+                <div class="application-bottom"><span>Submitted {{ deal.createdAt | date:'mediumDate' }}</span><button class="link-button" (click)="sanctionDealId = '' + deal.dealId; navigate('sanction')">Sanction letter →</button></div>
+              </article>
+            }
+          </div>
+          <div class="pagination"><button class="secondary-button" [disabled]="pageNumber <= 0" (click)="changePage(-1)">← Previous</button><span>Page {{ pageNumber + 1 }} of {{ totalPages || 1 }}</span><button class="secondary-button" [disabled]="pageNumber + 1 >= totalPages" (click)="changePage(1)">Next →</button></div>
+        }
+      </section>
+    }
+
+    @if (page === 'sanction') {
+      <section class="content-card">
+        <div class="card-heading"><div><span class="kicker">SANCTION DOCUMENT</span><h2>Sanction letter</h2><p>Load or generate a sanction letter using an existing loan application ID.</p></div><span class="file-symbol large">▧</span></div>
+        <div class="inline-form"><label class="field grow"><span>Loan deal ID</span><input type="number" min="1" [(ngModel)]="sanctionDealId" placeholder="Enter deal ID"></label><button class="secondary-button" (click)="loadSanction()">View letter</button><button class="primary-button" (click)="generateSanction()" [disabled]="busy">Generate <span>→</span></button></div>
+        @if (sanction) {
+          <div class="sanction-paper"><div class="paper-brand"><div class="brand-mark">L</div><div><strong>{{ sanction['issuingBank'] || 'LoanSphere Partner Bank' }}</strong><small>OFFICIAL SANCTION LETTER</small></div><span class="status-chip approved">Issued</span></div><div class="paper-rule"></div><div class="paper-meta"><div><span>Sanction number</span><strong>{{ sanction['sanctionNumber'] || '—' }}</strong></div><div><span>Application number</span><strong>{{ sanction['applicationNumber'] || sanction['dealId'] || '—' }}</strong></div><div><span>Issued on</span><strong>{{ dateValue(sanction['issuedAt']) | date:'mediumDate' }}</strong></div></div><h3>Loan sanction summary</h3><div class="sanction-amount"><span>Sanctioned amount</span><strong>{{ money(sanction['sanctionedAmount']) }}</strong></div><div class="application-values"><div><span>Applicant</span><strong>{{ sanction['applicantName'] || '—' }}</strong></div><div><span>Loan type</span><strong>{{ pretty(sanction['loanType']) }}</strong></div><div><span>Interest rate</span><strong>{{ sanction['annualInterestRate'] }}%</strong></div><div><span>Tenure</span><strong>{{ sanction['tenureMonths'] }} months</strong></div><div><span>Monthly EMI</span><strong>{{ money(sanction['emiAmount']) }}</strong></div><div><span>Valid until</span><strong>{{ dateValue(sanction['validUntil']) | date:'mediumDate' }}</strong></div></div><div class="paper-rule"></div><p class="paper-note">This screen displays the sanction data returned by the backend. The downloadable PDF is generated by the sanction-letter API.</p><button class="primary-button" (click)="downloadSanction()">Download PDF <span>↓</span></button></div>
+        } @else { <div class="empty-state"><span>▧</span><strong>No sanction letter loaded</strong><p>Enter the deal ID and choose View letter or Generate.</p></div> }
+      </section>
+    }
+
+    @if (page === 'accounts') {
+      <section class="content-card"><div class="card-heading"><div><span class="kicker">ACTIVE LOANS</span><h2>Loan accounts</h2><p>Accounts created by the backend after successful disbursement.</p></div><button class="secondary-button" (click)="loadAccounts()">Refresh accounts</button></div>
+        @if (accounts.length === 0) { <div class="empty-state"><span>◷</span><strong>No loan accounts found</strong><p>Accounts appear after the backend completes disbursement.</p></div> }
+        @else { <div class="table-wrap"><table><thead><tr><th>Account</th><th>Loan amount</th><th>Outstanding</th><th>EMI</th><th>Status</th></tr></thead><tbody>@for (account of accounts; track account['loanAccountId']) { <tr><td><strong>{{ account['loanAccountNo'] || '#' + account['loanAccountId'] }}</strong><small>Deal #{{ account['dealId'] }}</small></td><td>{{ money(account['loanAmount']) }}</td><td>{{ money(account['outstandingPrincipal']) }}</td><td>{{ money(account['emiAmount']) }}</td><td><span class="status-chip" [class]="pretty(account['status']).toLowerCase().replaceAll(' ', '-')">{{ pretty(account['status']) }}</span></td></tr> }</tbody></table></div> }
+      </section>
+    }
+
+    @if (page === 'notifications') {
+      <section class="content-card"><div class="card-heading"><div><span class="kicker">UPDATES</span><h2>Notifications</h2><p>Loan updates returned by the notification API.</p></div><button class="secondary-button" (click)="loadNotifications()">Refresh</button></div>
+        @if (notifications.length === 0) { <div class="empty-state"><span>♧</span><strong>You're all caught up</strong><p>No notifications found for this customer ID.</p></div> }
+        @else { <div class="notification-list">@for (item of notifications; track item.notificationId) { <article class="notification-item" [class.unread]="!item.read"><span class="notification-icon">{{ item.read ? '✓' : '•' }}</span><div class="notification-copy"><p>{{ item.message }}</p><small>{{ item.createdAt | date:'medium' }}</small></div>@if (!item.read) { <button class="link-button" (click)="markNotificationRead(item)">Mark read</button> }</article> }</div> }
+      </section>
+    }
+
+    @if (page === 'kyc-review') {
+      <section class="content-card"><div class="card-heading"><div><span class="kicker">OFFICER WORK QUEUE</span><h2>KYC review</h2><p>Open documents, then approve or reject them. Rejection requires a reason.</p></div><button class="secondary-button" (click)="loadPendingKyc()">Refresh queue</button></div>
+        @if (pendingKyc.length === 0) { <div class="empty-state"><span>✓</span><strong>No pending KYC documents</strong><p>Pending documents from the backend appear here.</p></div> }
+        @else { <div class="review-list">@for (doc of pendingKyc; track doc.documentId) { <article class="review-card"><div class="review-card-head"><div class="doc-cell"><span class="file-mini">▧</span><span><strong>{{ pretty(doc.documentType) }}</strong><small>Document #{{ doc.documentId }} · Customer #{{ doc.customerId }}</small></span></div><span class="status-chip pending">{{ pretty(doc.verificationStatus) }}</span></div><button class="secondary-button" (click)="viewKyc(doc, true)">View document ↗</button><label class="field"><span>Review note / rejection reason</span><textarea rows="2" [(ngModel)]="decisionRemarks[doc.documentId]" placeholder="Required if rejecting"></textarea></label><div class="review-actions"><button class="danger-button" (click)="reviewKyc(doc, 'REJECTED')" [disabled]="busy">Reject</button><button class="primary-button" (click)="reviewKyc(doc, 'APPROVED')" [disabled]="busy">Approve <span>✓</span></button></div></article> }</div> }
+      </section>
+    }
+
+    @if (page === 'eligibility-review') {
+      <section class="content-card"><div class="card-heading"><div><span class="kicker">OFFICER WORK QUEUE</span><h2>Eligibility review</h2><p>Review pending eligibility results from the loan backend.</p></div><button class="secondary-button" (click)="loadPendingEligibility()">Refresh queue</button></div>
+        @if (eligibilityReviews.length === 0) { <div class="empty-state"><span>✓</span><strong>No pending eligibility reviews</strong><p>There are no results in the pending review queue.</p></div> }
+        @else { <div class="review-list">@for (item of eligibilityReviews; track item.eligibilityId) { <article class="review-card"><div class="review-card-head"><div><span class="kicker">ELIGIBILITY #{{ item.eligibilityId }}</span><h3>Customer #{{ item.customerId }}</h3></div><span class="status-chip pending">{{ pretty(item.reviewStatus) }}</span></div><div class="application-values"><div><span>CIBIL score</span><strong>{{ item.cibilScore }}</strong></div><div><span>Eligible amount</span><strong>{{ money(item.eligibleLoanAmount) }}</strong></div><div><span>Risk category</span><strong>{{ pretty(item.riskCategory) }}</strong></div></div><label class="field"><span>Remarks</span><textarea rows="2" [(ngModel)]="decisionRemarks[item.eligibilityId]" placeholder="Required for rejection"></textarea></label><div class="review-actions"><button class="danger-button" (click)="reviewEligibility(item, 'REJECTED')" [disabled]="busy">Reject</button><button class="primary-button" (click)="reviewEligibility(item, 'APPROVED')" [disabled]="busy">Approve <span>✓</span></button></div></article> }</div> }
+      </section>
+    }
+
+    @if (page === 'loan-review') {
+      <section class="content-card"><div class="card-heading"><div><span class="kicker">OFFICER WORK QUEUE</span><h2>Loan processing</h2><p>Review applications and process approved applications for disbursement.</p></div><button class="secondary-button" (click)="loadPendingDeals()">Refresh queue</button></div>
+        <div class="inline-form bank-partner"><label class="field grow"><span>Disbursement partner</span><select [(ngModel)]="selectedBankPartner"><option value="SBI">State Bank of India</option><option value="HDFC">HDFC Bank</option><option value="ICICI">ICICI Bank</option><option value="AXIS">Axis Bank</option><option value="BANK_OF_INDIA">Bank of India</option><option value="BANK_OF_MAHARASHTRA">Bank of Maharashtra</option></select></label><label class="field grow"><span>Approved deal ID for disbursement</span><input type="number" min="1" [(ngModel)]="disbursementDealId" placeholder="Enter approved deal ID"></label><button class="primary-button" (click)="disburseById()" [disabled]="busy">Disburse approved deal →</button></div>
+        @if (pendingDeals.length === 0) { <div class="empty-state"><span>✓</span><strong>No pending loan applications</strong><p>Applications with pending review status will appear here.</p></div> }
+        @else { <div class="review-list">@for (deal of pendingDeals; track deal.dealId) { <article class="review-card"><div class="review-card-head"><div><span class="kicker">APPLICATION #{{ deal.dealId }}</span><h3>{{ pretty(deal.loanType) }}</h3><small>Customer #{{ deal.customerId }} · Scorecard #{{ deal.scoreCardId }}</small></div><span class="status-chip pending">{{ pretty(deal.status) }}</span></div><div class="application-values"><div><span>Requested amount</span><strong>{{ money(deal.loanAmount) }}</strong></div><div><span>Eligible amount</span><strong>{{ money(deal.eligibleLoanAmount) }}</strong></div><div><span>Monthly EMI</span><strong>{{ money(deal.emiAmount) }}</strong></div><div><span>Tenure</span><strong>{{ deal.tenureMonths }} months</strong></div><div><span>Interest rate</span><strong>{{ deal.annualInterestRate }}%</strong></div><div><span>Disbursement date</span><strong>{{ deal.requestedDisbursementDate | date:'mediumDate' }}</strong></div></div><label class="field"><span>Officer remarks</span><textarea rows="2" [(ngModel)]="decisionRemarks[deal.dealId]" placeholder="Required for rejection"></textarea></label><div class="review-actions"><button class="danger-button" (click)="reviewDeal(deal, 'REJECTED')" [disabled]="busy">Reject</button><button class="secondary-button" (click)="reviewDeal(deal, 'APPROVED')" [disabled]="busy">Approve application</button><button class="primary-button" (click)="disburse(deal)" [disabled]="busy">Disburse <span>→</span></button></div><p class="micro-note">Disbursement will only succeed if the backend considers this application eligible for disbursement.</p></article> }</div> }
+      </section>
+    }
+
+    <footer class="page-footer"><span>LoanSphere · Frontend connected to Spring Boot REST APIs</span><span>Development environment <i></i></span></footer>
+  </main>
+</div>
